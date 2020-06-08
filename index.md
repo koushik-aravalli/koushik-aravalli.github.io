@@ -9,7 +9,7 @@ title: Koushik's - Scribble
   {% for post in site.posts %}
     <li>
         <span>{{ post.date | date_to_string }}</span> <br/>
-        &emsp<a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+        <ebsp/> <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
     </li>
   {% endfor %}
     
