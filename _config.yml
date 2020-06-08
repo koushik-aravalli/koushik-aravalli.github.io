@@ -1,5 +1,5 @@
 theme: jekyll-theme-slate
 title: Koushik Aravalli's scribble
-description: This is a blog site
+description: This is Koushik's scribble
 
 permalink: /blog/:year/:month/:day/:title
