@@ -19,13 +19,16 @@ title: Clone Github Repo from VSCode
   So you login with your favourite browser and check, and your repo is right there untouched!! 
 
   Scratch your head and rethink, is it network error. Now open your awesome tool 'VSCode', click on the shining button 'Clone Repository' --> Clone from GitHub. 
-    
+    <a href="/images/vscode-github-connection"></a>
   Browser opens up and asks to authroize VSCode. Now with a smiling face, we authorize. BAAAAMMMM... Error 
+    <a href="/images/vscode-github-connection-browser-error">
+
   ```
     Oh no! An error occurred!
     Please restart the sign in process from the editor.
     Error code 801
   ```
+  </a>
 </p>
 
 <p>
@@ -36,9 +39,12 @@ title: Clone Github Repo from VSCode
  Solution: 
     - Login into GitHub
     - Select your profile and settings
+            <a href="/images/github-settings">
     - On the right bottopm look for Developer Settings
+            <a href="/images/github-developer-settings">
     - Select and Open Personal Access tokens
         - Notice that it lists all the workstations (devices) that you have used to work or cloned your personal github projects
+        <a href="/images/github-pat">
         - Now, on the top 'Generate new token', give it a name and <b><u>make sure you copy the token hash key</u></b>
     - Jump back to your VSCode, retry your git clone command or at the right bottom look for 'Signing into GitHub', click it and you willbe asked to enter token. Paste it and done. 
 
