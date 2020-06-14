@@ -18,10 +18,10 @@ fatal: repository https://github.com/{your-account-name}/{your-repo-name}.git no
 So you login with your favourite browser and check, and your repo is right there untouched!! 
 
 Scratch your head and rethink, is it network error. Now open your awesome tool 'VSCode', click on the shining button 'Clone Repository' --> Clone from GitHub. 
-![](vscode-github-connection)
+![](vscode-github-connection.jpg)
 
 Browser opens up and asks to authroize VSCode. Now with a smiling face, we authorize. BAAAAMMMM... Error 
-![](vscode-github-connection-browser-error)
+![](vscode-github-connection-browser-error.jpg)
 
   ```
     Oh no! An error occurred!
@@ -37,15 +37,15 @@ GitHub internally maintains the list of all devices which were used for authenti
    - Login into GitHub from the browser
    
    - Select your profile and settings
-    ![](/assests/github-settings)
+    ![](/assests/github-settings.jpg)
 
    - On the right bottopm look for Developer Settings
-    ![](/assests/github-developer-settings)
+    ![](/assests/github-developer-settings.jpg)
    
    - Select and Open Personal Access tokens
    
    - Notice that it lists all the workstations (devices) that you have used to work or cloned your personal github projects
-    ![](./assests/github-pat)
+    ![](./assests/github-pat.jpg)
    
    - Now, on the top 'Generate new token', give it a name and ***make sure you copy the token hash key***
 
