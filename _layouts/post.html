@@ -2,41 +2,10 @@
 layout: default
 ---
 <h1 style="text-align:center">
-    {{ page.title }}
+  {{ page.title }}
 </h1>
 
 <div class="post">
-  {{ content }}
+  {{ content }} 
   <p class="meta" style="text-align:right;">{{ page.date | date_to_string }}</p>
 </div>
-
-<footer>
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-8 col-md-10 mx-auto">
-        <ul class="list-inline text-center">
-          <li class="list-inline-item">
-            <a class="nav-link" href="/about.html">About Me</a>
-          </li>
-          <li class="list-inline-item">
-            <a href="https://twitter.com/koushikaravalli">
-              <span class="fa-stack fa-lg">
-                <i class="fas fa-circle fa-stack-2x"></i>
-                <i class="fab fa-twitter fa-stack-1x fa-inverse"></i>
-              </span>
-            </a>
-          </li>
-          <li class="list-inline-item">
-            <a href="https://github.com/koushik-aravalli">
-              <span class="fa-stack fa-lg">
-                <i class="fas fa-circle fa-stack-2x"></i>
-                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
-              </span>
-            </a>
-          </li>
-        </ul>
-        <p class="copyright text-muted">Copyright &copy; 2020</p>
-      </div>
-    </div>
-  </div>
-</footer>
