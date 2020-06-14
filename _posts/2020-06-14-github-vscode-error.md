@@ -18,9 +18,11 @@ fatal: repository https://github.com/{your-account-name}/{your-repo-name}.git no
 So you login with your favourite browser and check, and your repo is right there untouched!! 
 
 Scratch your head and rethink, is it network error. Now open your awesome tool 'VSCode', click on the shining button 'Clone Repository' --> Clone from GitHub. 
-![image](/assests/vscode-github-connection)
-![VSCode GitHub Connection](/assests/vscode-github-connection)
+
+![](/assests/vscode-github-connection)
+
 Browser opens up and asks to authroize VSCode. Now with a smiling face, we authorize. BAAAAMMMM... Error 
+
 ![](/images/vscode-github-connection-browser-error)
 
   ```
@@ -33,16 +35,25 @@ Browser opens up and asks to authroize VSCode. Now with a smiling face, we autho
 GitHub internally maintains the list of all devices which were used for authentication and it doesnt have your latest device
 
 ### Solution
-   - Login into GitHub
+
+   - Login into GitHub from the browser
+   
    - Select your profile and settings
+
     ![](/assests/github-settings)
-    <a href="./assests/github-settings"></a>
+
    - On the right bottopm look for Developer Settings
+
     ![](/assests/github-developer-settings)
+   
    - Select and Open Personal Access tokens
+   
    - Notice that it lists all the workstations (devices) that you have used to work or cloned your personal github projects
+
     ![](./assests/github-pat)
+   
    - Now, on the top 'Generate new token', give it a name and ***make sure you copy the token hash key***
+
    - Jump back to your VSCode, retry your git clone command or at the right bottom look for 'Signing into GitHub', click it and you willbe asked to enter token. Paste it and done. 
 
 Simple isn't it. ... Happy coding..
