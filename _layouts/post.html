@@ -2,11 +2,10 @@
 layout: default
 ---
 <h1 style="text-align:center">
-    {{ page.title }}
+  {{ page.title }}
 </h1>
 
 <div class="post">
-  <p class="meta">{{ page.date | date_to_string }}</p>
-  {{ content }}
+  {{ content }} 
   <p class="meta" style="text-align:right;">{{ page.date | date_to_string }}</p>
 </div>
