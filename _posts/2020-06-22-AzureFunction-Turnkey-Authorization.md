@@ -45,6 +45,24 @@ Here is the prerequisite:
 
 1. Check if the selected ADGroup which is allowed to consume the Function is part of the ObjectId membership list.
 
+#### Diagram makes more sense than words
+::: mermaid
+sequenceDiagram
+  participant AADGroup-DevopsTeam-One
+  participant AADGroup-DevopsTeam-Two
+
+  DevopsTeam-One->>AzureFunction: 
+  loop CheckAuthorization
+      AzureFunction->>AzureAD: Get Claims from token
+  end
+  AzureFunction-->> Authorized
+
+  DevopsTeam-Two->>AzureFunction: 
+  loop CheckAuthorization
+      AzureFunction->>AzureAD: Get Claims from token
+  end
+  AzureFunction-->> Unauthorized (401)
+:::
 
 ## V3 of Azure Function: What does it mean?
 
@@ -59,6 +77,66 @@ So where do we start...
 
 ### For the prerequisites
 __[Azure Docs](https://docs.microsoft.com/en-us/azure/app-service/configure-authentication-provider-aad)__ provides details on how to create Authentication on an App Service. 
+
+#### We want code no portal
+
+When using ARM template it can also be done with the following resource added to the FunctionApp deployment:
+
+```
+{
+  "parameters":{
+    "authenticationClientSecret": {
+        "reference": {
+          "keyVault": {
+          "id": "/subscriptions/<subscription-id>/resourceGroups/<rg-name>/providers/Microsoft.KeyVault/vaults/<vault-name>"
+          },
+          "secretName": "authenticationClientSecret"
+        }
+      },
+    "authenticationClientId": {
+        "reference": {
+          "keyVault": {
+          "id": "/subscriptions/<subscription-id>/resourceGroups/<rg-name>/providers/Microsoft.KeyVault/vaults/<vault-name>"
+          },
+          "secretName": "authenticationClientId"
+        }
+      }
+  },
+  "variables" : {
+    "authenticationTokenIssuer": "https://sts.windows.net/<tenant-id>"
+  }
+}
+```
+
+```
+  {
+      "type": "config",
+      "name": "authsettings",
+      "apiVersion": "2019-08-01",
+      "dependsOn": [
+          "[variables('appServiceResourceId')]"
+      ],
+      "properties": {
+          "enabled": true,
+          "unauthenticatedClientAction": "RedirectToLoginPage",
+          "tokenStoreEnabled": true,
+          "defaultProvider": "AzureActiveDirectory",
+          "clientId": "[parameters('authenticationClientId')]",
+          "clientSecret": "[parameters('authenticationClientSecret')]",
+          "issuer": "[variables('authenticationTokenIssuer')]",
+          "additionalLoginParams": [
+              "response_type=code id_token",
+              "resource=https://graph.windows.net"
+          ],
+          "allowedAudiences": [
+              "https://graph.windows.net"
+          ]
+      }
+  }
+```
+
+Validate SPN's API permission after the FunctionApp deployment
+![](/assets/functionapp-spn-app-permissions.jpg)
 
 In this example Azure Function 'its-authenticated' is deployed in 'pass-workload' resource group.
 
@@ -168,6 +246,5 @@ Use LINQ or normal conditional loop
         }
     }
   ```
-
 
 That's it.. ;) ... Hope that gives a starting point to secure Azure FunctionApp.. Here is the __[repo](https://github.com/koushik-aravalli/functionapp-dotnetcore)__ for reference
