@@ -12,3 +12,9 @@ Learning is fun and it never ends, with continous evolution of IT (software/midd
 So, this blog is going to be a journey for me that focuses, highlights the aspects that I encounter. With the inspiration of industry experts and motivation from my collegues but surely will do my best to share experiences. 
 
 __By the way, all ideas, thoughts, scribbles, scratches, code snippets, pushes mentioned here are my own not influenced by anyone nor reflections of my employer.__
+
+## I follow
+Every person who has an inspiring story which keeps him confident, motivated and a leader. 
+
+## Best quote
+_It is within the moments of a decision making that carves persons destiny._
