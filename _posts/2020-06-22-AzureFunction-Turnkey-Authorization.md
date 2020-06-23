@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Azure Function with Turnkey Authorization
+use_mermaid: true
 ---
 <!-- Post Content -->
 
@@ -45,25 +46,6 @@ Here is the prerequisite:
 
 1. Check if the selected ADGroup which is allowed to consume the Function is part of the ObjectId membership list.
 
-#### Diagram makes more sense than words
-::: mermaid
-sequenceDiagram
-  participant AADGroup-DevopsTeam-One
-  participant AADGroup-DevopsTeam-Two
-
-  DevopsTeam-One->>AzureFunction: 
-  loop CheckAuthorization
-      AzureFunction->>AzureAD: Get Claims from token
-  end
-  AzureFunction-->> Authorized
-
-  DevopsTeam-Two->>AzureFunction: 
-  loop CheckAuthorization
-      AzureFunction->>AzureAD: Get Claims from token
-  end
-  AzureFunction-->> Unauthorized (401)
-:::
-
 ## V3 of Azure Function: What does it mean?
 
 It is almost a day in day out work to write, publish and deploy APIs as developers and architects (yes they do write code). .NET Core is a norm, if you do not believe it look in the __[stackoverflow's statistics](https://insights.stackoverflow.com/survey/2019#technology-_-other-frameworks-libraries-and-tools)__. 
@@ -78,7 +60,7 @@ So where do we start...
 ### For the prerequisites
 __[Azure Docs](https://docs.microsoft.com/en-us/azure/app-service/configure-authentication-provider-aad)__ provides details on how to create Authentication on an App Service. 
 
-#### We want code no portal
+#### We want code... no portal
 
 When using ARM template it can also be done with the following resource added to the FunctionApp deployment:
 
