@@ -1,9 +1,10 @@
 ---
 layout: post
-title: Azure Function (v3) with Authorization - Turnkey approach
+title: Azure Function with Turnkey Authorization
 ---
 <!-- Post Content -->
 
+<br/>
 
 ## Working with Azure Functions as typical API
 
@@ -18,7 +19,7 @@ Here is the illustration of what we are trying to solve
 ![](/assets/Authroized-AzFunction.jpg)
 
 ## Turn Key solution
-Within [Azure docs](https://docs.microsoft.com/en-us/azure/app-service/app-service-authentication-how-to), highlights the usage of Turn-Key approach to address the Authorization issue. 
+Within __[Azure docs](https://docs.microsoft.com/en-us/azure/app-service/app-service-authentication-how-to)__, highlights the usage of Turn-Key approach to address the Authorization issue. 
 
 Here is the prerequisite:
 
@@ -47,7 +48,7 @@ Here is the prerequisite:
 
 ## V3 of Azure Function: What does it mean?
 
-It is almost a day in day out work to write, publish and deploy APIs as developers and architects (yes they do write code). .NET Core is a norm, if you do not believe it look in the [stackoverflow's statistics](https://insights.stackoverflow.com/survey/2019#technology-_-other-frameworks-libraries-and-tools). 
+It is almost a day in day out work to write, publish and deploy APIs as developers and architects (yes they do write code). .NET Core is a norm, if you do not believe it look in the __[stackoverflow's statistics](https://insights.stackoverflow.com/survey/2019#technology-_-other-frameworks-libraries-and-tools)__. 
 
 Azure Function with the .NET core starting from V2 version supports Dependency Injection. And V3, launched in September 2019, is implemented with .NET 3.1 
 
@@ -57,7 +58,7 @@ If you jumped here, you have not missed anything about awesomeness of .NET core 
 So where do we start...
 
 ### For the prerequisites
-[Azure Docs](https://docs.microsoft.com/en-us/azure/app-service/configure-authentication-provider-aad) provides details on how to create Authentication on an App Service. 
+__[Azure Docs](https://docs.microsoft.com/en-us/azure/app-service/configure-authentication-provider-aad)__ provides details on how to create Authentication on an App Service. 
 
 In this example Azure Function 'its-authenticated' is deployed in 'pass-workload' resource group.
 
@@ -94,14 +95,17 @@ From the response, get clientId.
   ```
 
 #### Get access-token for a user
-- Login as the ServicePrincipal [client_secret value is part of the command](check-delegated-spn)
-- Run az cli command to get the token
+
+- Login as the ServicePrincipal __[client_secret value is part of the command](#check-delegated-spn)__
+
+- Run Azure cli command to get the token
   ```
     az account get-access-token
   ```
 
 #### Decode token
-To check if the token belongs to the expected Tenant and is a valid user. You can also decode the token using [jwt.io](https://jwt.io/#encoded-jwt) and check manually
+
+To check if the token belongs to the expected Tenant and is a valid user. You can also decode the token using __[jwt.io](https://jwt.io/#encoded-jwt)__ and check manually
 
 Here is the sample code to get details using Azure AD GraphApi:
 
@@ -122,11 +126,12 @@ Here is the sample code to get details using Azure AD GraphApi:
 
   }
 ```
-  _Note: httpclient is initialized with default authorization headers as the incoming accesstoken._
+  _Note: HttpClient is initialized with default authorization headers as the incoming accesstoken._
 
   ```
     _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
   ```
+
 #### Get Group Memberships of the current user context
 
 Again using AzureAD graph API get all group membership that the user context has. 
@@ -148,19 +153,21 @@ Again using AzureAD graph API get all group membership that the user context has
 
     }
    ```
+
 #### Finally check if the list has valid Authorized group
     
-    Use Linq or normal conditional loop
-    ```
-      foreach (JsonElement arrayElement in valueElement.EnumerateArray())
-      {
-          if (arrayElement.GetString() == AuthorizedGroupObjectId)
-          {
-              authorizedGroupFound = true;
-              break;
-          }
-      }
-    ```
+Use LINQ or normal conditional loop
+
+  ```
+    foreach (JsonElement arrayElement in valueElement.EnumerateArray())
+    {
+        if (arrayElement.GetString() == AuthorizedGroupObjectId)
+        {
+            authorizedGroupFound = true;
+            break;
+        }
+    }
+  ```
 
 
-That's it.. ;) ... Hope that give a starting point.. Here is the [repo](https://github.com/koushik-aravalli/functionapp-dotnetcore) for reference
+That's it.. ;) ... Hope that gives a starting point to secure Azure FunctionApp.. Here is the __[repo](https://github.com/koushik-aravalli/functionapp-dotnetcore)__ for reference

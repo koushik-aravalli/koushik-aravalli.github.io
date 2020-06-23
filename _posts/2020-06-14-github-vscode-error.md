@@ -15,12 +15,12 @@ One fine day you have your a new most powerful (developers dream) laptop, everyt
 fatal: repository https://github.com/{your-account-name}/{your-repo-name}.git not found
 ```
 
-So you login with your favourite browser and check, and your repo is right there untouched!! 
+So you login with your favorite browser and check, and your repo is right there untouched!! 
 
 Scratch your head and rethink, is it network error. Now open your awesome tool 'VSCode', click on the shining button 'Clone Repository' --> Clone from GitHub. 
 ![](/assets/vscode-github-connection.jpg)
 
-Browser opens up and asks to authroize VSCode. Now with a smiling face, we authorize. BAAAAMMMM... Error 
+Browser opens up and asks to authorize VSCode. Now with a smiling face, we authorize. BAAAAMMMM... Error 
 ![](/assets/vscode-github-connection-browser-error.jpg)
 
   ```
