@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Clone Github Repo from VSCode
+title: Clone GitHub Repo from VSCode
 ---
 <!-- Post Content -->
            
@@ -15,12 +15,12 @@ One fine day you have your a new most powerful (developers dream) laptop, everyt
 fatal: repository https://github.com/{your-account-name}/{your-repo-name}.git not found
 ```
 
-So you login with your favourite browser and check, and your repo is right there untouched!! 
+So you login with your favorite browser and check, and your repo is right there untouched!! 
 
 Scratch your head and rethink, is it network error. Now open your awesome tool 'VSCode', click on the shining button 'Clone Repository' --> Clone from GitHub. 
 ![](/assets/vscode-github-connection.jpg)
 
-Browser opens up and asks to authroize VSCode. Now with a smiling face, we authorize. BAAAAMMMM... Error 
+Browser opens up and asks to authorize VSCode. Now with a smiling face, we authorize. BAAAAMMMM... Error 
 ![](/assets/vscode-github-connection-browser-error.jpg)
 
   ```
@@ -39,7 +39,7 @@ GitHub internally maintains the list of all devices which were used for authenti
    - Select your profile and settings
     ![](/assets/github-settings.jpg)
 
-   - On the right bottopm look for Developer Settings
+   - On the right bottom look for Developer Settings
     ![](/assets/github-developer-settings.jpg)
    
    - Select and Open Personal Access tokens
@@ -49,6 +49,6 @@ GitHub internally maintains the list of all devices which were used for authenti
    
    - Now, on the top 'Generate new token', give it a name and ***make sure you copy the token hash key***
 
-   - Jump back to your VSCode, retry your git clone command or at the right bottom look for 'Signing into GitHub', click it and you willbe asked to enter token. Paste it and done. 
+   - Jump back to your VSCode, retry your git clone command or at the right bottom look for 'Signing into GitHub', click it and you will be asked to enter token. Paste it and done. 
 
 Simple isn't it. ... Happy coding..
