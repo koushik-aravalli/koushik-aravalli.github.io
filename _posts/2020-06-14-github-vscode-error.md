@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Clone Github Repo from VSCode
+title: Clone GitHub Repo from VSCode
 ---
 <!-- Post Content -->
            
@@ -39,7 +39,7 @@ GitHub internally maintains the list of all devices which were used for authenti
    - Select your profile and settings
     ![](/assets/github-settings.jpg)
 
-   - On the right bottopm look for Developer Settings
+   - On the right bottom look for Developer Settings
     ![](/assets/github-developer-settings.jpg)
    
    - Select and Open Personal Access tokens
@@ -49,6 +49,6 @@ GitHub internally maintains the list of all devices which were used for authenti
    
    - Now, on the top 'Generate new token', give it a name and ***make sure you copy the token hash key***
 
-   - Jump back to your VSCode, retry your git clone command or at the right bottom look for 'Signing into GitHub', click it and you willbe asked to enter token. Paste it and done. 
+   - Jump back to your VSCode, retry your git clone command or at the right bottom look for 'Signing into GitHub', click it and you will be asked to enter token. Paste it and done. 
 
 Simple isn't it. ... Happy coding..
