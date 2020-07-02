@@ -1,8 +1,10 @@
 ---
 layout: post
-title: Azure Devops YAML Working models and challenges
+title: Azure DevOps YAML Working models and challenges
 ---
 <!-- Post Content -->
+
+<br/>
 
 ## Background
 As we, within a team, start working together and digest that the operations are part of our daily activities, the subconscious part of our mind treat these as development actions. This gradually mutates into code (in any language) and automation, assuming that it will simplify our lives! 
@@ -11,14 +13,15 @@ When a ProductOwner starts his question with "Is it possible to ...", thinking w
 
 _[Azure DeveOps](https://dev.azure.com)_ is almost a default across many organizations. Continuous improvements on the features by the product team and their transparency on their _[road map](https://dev.azure.com/mseng/AzureDevOpsRoadmap/_workitems/recentlyupdated)_ helps in making a rational decision on the implementations. Most of the leading Application release automation products, pipeline as code is a norm. As I already said, our inclination towards writing code is now much more biased, isn't it? 
 
+<br/>
+
 ### _Concern_: __Pipeline as Code != Pipeline as Scripture__
 
-Azure Devops supports developers in organizing pipelines as either YAML or friendly drag-drop view. Teams prefer former approach which has advantages over the later one mostly because of the embedded DevOps culture.
+Azure DevOps supports developers in organizing pipelines as either YAML or friendly drag-drop view. Teams prefer former approach which has advantages over the later one mostly because of the embedded DevOps culture.
 
 |   YAML   |    Classic   |
 |---|---|
-|![](/assets/2020-07-02-AzDevops-Yaml-Build.jpg)|![](/assets/2020-07-02-AzDevops-Classic-Build.jpg)   |
-
+|![](/assets/2020-07-02-AzDevops-Yaml-Build.jpg)|![](/assets/2020-07-02-AzDevops-Classic-Build.jpg)|
 
 ### _How to Address_: __Standards when writing pipeline__
 
@@ -36,6 +39,8 @@ Inline with general coding standards, team should also enforce all possible acti
  - Azure DevOps accepts runtime variables in either ``` $(var) ``` or ``` $[variables.var] ``` format. Stay consistent in runtime variable declaration to avoid confusion. 
  - Target towards light weight Jobs. Single Stage with multiple Jobs is acceptable as well.
  
+ <br/>
+
 ### _Concern_: __Pipeline name__
 
 By default new pipeline created in Azure DevOps is named ```YourRepo - CI``` or ```YourRepo - CI(#)```. This is not always the case if there are bunch of solutions hosted within the same repo. 
@@ -51,6 +56,8 @@ By default new pipeline created in Azure DevOps is named ```YourRepo - CI``` or 
 
 - Rename pipeline as soon as they are added manually. 
 ![](2020-07-02-AzDevops-Yaml-PipelineName)
+
+<br/>
 
 ### _Concern_ : __Random execution name__
 Every execution of the pipeline should tell a story of what could have been done. Execution Name make a story along with comment messages. 
