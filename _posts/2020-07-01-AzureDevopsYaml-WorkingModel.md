@@ -38,6 +38,7 @@ Inline with general coding standards, team should also enforce all possible acti
     - __lowercase_underscore_separated_name__ for task Names
  - Azure DevOps accepts runtime variables in either ``` $(var) ``` or ``` $[variables.var] ``` format. Stay consistent in runtime variable declaration to avoid confusion. 
  - Target towards light weight Jobs. Single Stage with multiple Jobs is acceptable as well.
+ - Finally, work towards not embedding process complexity into pipeline yaml.
  
  <br/>
 
