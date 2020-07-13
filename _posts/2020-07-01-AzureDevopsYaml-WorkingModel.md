@@ -11,7 +11,7 @@ As we, within a team, start working together and digest that the operations are 
 
 When a ProductOwner starts his question with "Is it possible to ...", thinking with my developers hat, without any hesitation the reply would be "Every thing is possible with code". _(But wait how many lines of code are we writing everyday. Again I started writing code to count the number of lines of code, number of git diffs and make a statics out of it. That is another post later.)_
 
-_[Azure DeveOps](https://dev.azure.com)_ is almost a default across many organizations. Continuous improvements on the features by the product team and their transparency on their _[road map](https://dev.azure.com/mseng/AzureDevOpsRoadmap/_workitems/recentlyupdated)_ helps in making a rational decision on the implementations. Most of the leading Application release automation products, pipeline as code is a norm. As I already said, our inclination towards writing code is now much more biased, isn't it? 
+_[Azure DevOps](https://dev.azure.com)_ is almost a default across many organizations. Continuous improvements on the features by the product team and their transparency on their _[road map](https://dev.azure.com/mseng/AzureDevOpsRoadmap/_workitems/recentlyupdated)_ helps in making a rational decision on the implementations. Most of the leading Application release automation products, pipeline as code is a norm. As I already said, our inclination towards writing code is now much more biased, isn't it? 
 
 <br/>
 
@@ -38,7 +38,7 @@ Inline with general coding standards, team should also enforce all possible acti
     - __lowercase_underscore_separated_name__ for task Names
  - Azure DevOps accepts runtime variables in either ``` $(var) ``` or ``` $[variables.var] ``` format. Stay consistent in runtime variable declaration to avoid confusion. 
  - Target towards light weight Jobs. Single Stage with multiple Jobs is acceptable as well.
- - Finally, work towards not embedding process complexity into pipeline yaml.
+ - Finally, work towards not embedding process complexity into pipeline YAML.
  
  <br/>
 
