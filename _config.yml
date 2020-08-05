@@ -6,3 +6,6 @@ permalink: /blog/:year/:month/:day/:title
 
 twitter_username: koushikaravalli
 github_username:  koushik-aravalli
+
+plugins:
+  - jekyll-feed
