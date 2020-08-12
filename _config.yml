@@ -9,3 +9,4 @@ github_username:  koushik-aravalli
 
 plugins:
   - jekyll-feed
+  - jekyll-Image-Size

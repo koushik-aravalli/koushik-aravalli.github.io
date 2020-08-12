@@ -16,13 +16,13 @@ Ok that is not the What part noir the Why!! During the questions session, a very
 
 At CCoE's, I have seen traditional implementation approach when Extension developments are done. Here is the view. 
  
- ![](/assets/2020-08-06-AzDevops-Extension.jpg)
+ ![](/assets/2020-08-06-AzDevops-Extension.jpg?v=4&s=50)
 
 Now when we rethink, [canary deployments](https://martinfowler.com/bliki/CanaryRelease.html#:~:text=Canary%20release%20is%20a%20technique,making%20it%20available%20to%20everybody.) are typical in a normal application developments when introducing new features in an application. We now we are working with software development that is managing the infrastructure on public cloud platform. In this post we are referring to the Azure as the landing zone and pipeline extensions are developed to target an Azure resource. A task within an extension, can call an ARM template or execute a PowerShell command from Azure PowerShell module or also invoke Azure Rest API to manage a resource. 
 
 So, here is one solution. 
 
- ![](/assets/2020-08-06-AzDevops-Canary-Approach.jpg)
+ ![](/assets/2020-08-06-AzDevops-Canary-Approach.jpg?s=200)
 
 - Create extension with task(s)
 - Create micro services (API Apps) performing
