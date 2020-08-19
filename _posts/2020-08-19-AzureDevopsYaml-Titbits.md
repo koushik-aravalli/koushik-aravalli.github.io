@@ -85,30 +85,31 @@ jobs:
 **Scenario:**
 - _Dynamically change the buildname of executing pipeline_
  ***Note: Default name of the pipeline will start as date when 'name' is not provided ***
+
 ```
-# azure-pipelines-updaterunningbuildname.yaml
-name: $(BuildId)_$(SourceBranch)_$(Date:yyyyMMdd)$(Rev:.r)
-trigger: none
-jobs:
-  - job: set_variable
-    displayName: Set Variable
-    steps:
-      - task: PowerShell@2
-        displayName: 'ps: Set BuildId'
-        name: set_buildId
-        enabled: true
-        inputs: 
-          targetType: 'inline'
-          script: | 
-            $buildId_name = "your-awesome-name with somespace and number 100"
-            Write-Host "##vso[task.setvariable variable=newId;isOutput=true]$buildId_name"
-  - job: update_buildName
-    displayName: Set BuildId
-    dependsOn: 
-      - set_variable
-    variables:
-      newBuildId: $[ dependencies.set_variable.outputs['set_buildId.newId'] ]
-    steps:
-      - powershell: |
-          Write-Host "##vso[build.updatebuildnumber]$(newBuildId)"
+  # azure-pipelines-updaterunningbuildname.yaml
+  name: $(BuildId)_$(SourceBranch)_$(Date:yyyyMMdd)$(Rev:.r)
+  trigger: none
+  jobs:
+    - job: set_variable
+      displayName: Set Variable
+      steps:
+        - task: PowerShell@2
+          displayName: 'ps: Set BuildId'
+          name: set_buildId
+          enabled: true
+          inputs: 
+            targetType: 'inline'
+            script: | 
+              $buildId_name = "your-awesome-name with somespace and number 100"
+              Write-Host "##vso[task.setvariable variable=newId;isOutput=true]$buildId_name"
+    - job: update_buildName
+      displayName: Set BuildId
+      dependsOn: 
+        - set_variable
+      variables:
+        newBuildId: $[ dependencies.set_variable.outputs['set_buildId.newId'] ]
+      steps:
+        - powershell: |
+            Write-Host "##vso[build.updatebuildnumber]$(newBuildId)"
 ```
