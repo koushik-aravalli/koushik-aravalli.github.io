@@ -44,7 +44,7 @@ GitHub internally maintains the list of all devices which were used for authenti
    
    - Select and Open Personal Access tokens
    
-   - Notice that it lists all the workstations (devices) that you have used to work or cloned your personal github projects
+   - Notice that it lists all the workstations (devices) that you have used to work or cloned your personal GitHub projects
     ![](/assets/github-pat.jpg)
    
    - Now, on the top 'Generate new token', give it a name and ***make sure you copy the token hash key***
