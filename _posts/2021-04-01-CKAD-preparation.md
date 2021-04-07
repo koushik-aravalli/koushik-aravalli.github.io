@@ -12,11 +12,12 @@ With few recommendation from friends, colleagues, and references gather followin
  - Udemy course by [KodeKloud](https://www.udemy.com/course/certified-kubernetes-application-developer/)
  - [Tech With Nana](https://www.youtube.com/channel/UCdngmbVKX1Tgre699-XLlUA)
 
- ### Setup environment to install Minikube
+ #### Setup environment to install Minikube
 
  To get started, I want to make sure my work is saves outside my laptop. So, I already have Azure Subscription, I am going to make use of it.
 
  #### Generate keys to access virtual machine
+
  - To access the Ubuntu sever from my windows machine, have windows terminal installed to make use of _[SSH](https://docs.microsoft.com/en-us/windows/terminal/tutorials/ssh)_
  - Create keys (optional), open windows terminal at user level using `ssh-keygen`, generate public and private keys. 
 
