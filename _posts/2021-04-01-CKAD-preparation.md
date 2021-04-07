@@ -9,21 +9,23 @@ So it is time to jump into Kubernetes Application Development. Target is set, ho
 ### Learning guide pinpoint
 
 With few recommendation from friends, colleagues, and references gather following material:
- - Udemy course by [KodeKloud](https://www.udemy.com/course/certified-kubernetes-application-developer/)
- - [Tech With Nana](https://www.youtube.com/channel/UCdngmbVKX1Tgre699-XLlUA)
+ 
+ - Udemy course by _[KodeKloud](https://www.udemy.com/course/certified-kubernetes-application-developer/)_
+ - _[Tech With Nana](https://www.youtube.com/channel/UCdngmbVKX1Tgre699-XLlUA)_
 
- #### Setup environment to install Minikube
+
+#### Setup environment to install Minikube
 
  To get started, I want to make sure my work is saves outside my laptop. So, I already have Azure Subscription, I am going to make use of it.
 
- #### Generate keys to access virtual machine
+#### Generate keys to access virtual machine
 
  - To access the Ubuntu sever from my windows machine, have windows terminal installed to make use of _[SSH](https://docs.microsoft.com/en-us/windows/terminal/tutorials/ssh)_
  - Create keys (optional), open windows terminal at user level using `ssh-keygen`, generate public and private keys. 
 
  ![](/assets/2021-04-01-sshkeygen.jpg)
 
- #### Create Ubuntu VM 
+#### Create Ubuntu VM 
 
  - Spin up Canonical.UbuntuServer in Azure
     - Make sure 3 series is selected size, because Virtualization is supported. Select D3 series: `Standard D2s v3 (2 vcpus, 8 GiB memory)`
@@ -32,7 +34,7 @@ With few recommendation from friends, colleagues, and references gather followin
 
  Here is the [deployment template](https://github.com/koushik-aravalli/development/blob/master/CKAD/Environment/azure-ubuntu-template.json)
 
- #### Connect to VM
+#### Connect to VM
 
   - Now the VM is ready, to connect from local machine, in this case windows machine, the private key is saved to `.ssh\id_rsa\` folder. It could as well be `.ssh\azureadmin\` as in my case I have work with multiple keys.
 
