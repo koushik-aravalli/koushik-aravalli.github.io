@@ -90,3 +90,28 @@ spec:
         matchlabels:
             type: frontend
 ```
+
+### Commands
+
+- To fix existing erroneous ReplicaSet
+
+```
+kubectl edit replicaset <name-of-replicaset>
+```
+
+- Scale up or down pods in the replica sets:
+
+```
+## Option 1
+kubectl scale --replicas <number> rs/<name-of-replicaset>
+
+## Option 2
+kubectl scale replicaset --replicas=<number> <name-of-replicaset>
+```
+
+### Debugging issue
+
+- A erroneous ReplicaSet can still create PODs but in error state. 
+To fix the issue there are two options:
+ - _Option 1_: Delete the ReplicaSet &rarr; Fix the YAML &rarr; Apply updated file to create new ReplicaSet
+ - _Option 2_: Using `kubectl edit` fix the YAML &rarr; Delete all the PODs which were created erroneously 
