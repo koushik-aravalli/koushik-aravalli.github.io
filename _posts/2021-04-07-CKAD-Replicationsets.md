@@ -83,7 +83,7 @@ spec:
 # replicaSet-definition.yaml 
 
 apiVersion: apps/v1
-kind: ReplicationController
+kind: ReplicaSet
 metadata:
     name: myapp-rc
     labels:
@@ -104,11 +104,23 @@ spec:
 
     replicas: 5
     selector: 
-        matchlabels:
+        matchLabels:
             type: frontend
 ```
 
 ### Commands
+
+- Create without yaml
+
+```
+kubectl create replicaSet authentication-rs --image nginx --replicas=3
+```
+
+- Get details of ReplicaSet
+
+```
+kubectl describe replicaSet authentication-rs
+```
 
 - To fix existing erroneous ReplicaSet
 
