@@ -113,3 +113,21 @@ jobs:
         - powershell: |
             Write-Host "##vso[build.updatebuildnumber]$(newBuildId)"
 ```
+
+**Scenario:**
+- _Upload files during build process as artifact_
+
+```
+  # azure-pipelines-uploadfile-as-buildartifact.yaml
+  steps:
+    - task: PowerShell@2
+      displayName: 'ps: Create file'
+      name: create_file
+      enabled: true
+      inputs: 
+        targetType: 'inline'
+        script: | 
+          New-Item $(System.DefaultWorkingDirectory)\test.txt
+          Set-Content $(System.DefaultWorkingDirectory)\test.txt 'We are going to upload this file as an artifact'
+          Write-Host "##vso[artifact.upload containerfolder=customupload;artifactname=samplefile]$(System.DefaultWorkingDirectory)\test.txt"
+```
