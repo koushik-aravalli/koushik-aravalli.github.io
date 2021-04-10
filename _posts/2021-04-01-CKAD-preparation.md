@@ -12,7 +12,7 @@ With few recommendation from friends, colleagues, and references gather followin
  
  - Udemy course by _[KodeKloud](https://www.udemy.com/course/certified-kubernetes-application-developer/)_
  - _[Tech With Nana](https://www.youtube.com/channel/UCdngmbVKX1Tgre699-XLlUA)_
-
+ - _[Katacoda](https://www.katacoda.com/courses/kubernetes)_
 
 #### Setup environment to install Minikube
 
