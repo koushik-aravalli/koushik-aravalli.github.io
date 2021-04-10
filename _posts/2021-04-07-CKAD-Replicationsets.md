@@ -39,11 +39,11 @@ Consider, within a K8S cluster there are already PODs, labeled `login-api`, runn
 
 ### POD from ReplicaSet Perspective
 
-The definition file for the ReplicaSet contains template of POD and selector fields. Based on this information, a replicaSet instance keep track of pods. In above scenario by default, the `authentication-rs` keeps track of _only_ the PODs labeled  `authentication-api` to make sure desired number of these PODs are running but not the PODs labeled `login-api`. By using the command `kubectl describe replicaset authentication-rs`, the Events sections will list all the PODs which are being tracked by the replicaSet. 
+The definition file for the ReplicaSet contains template of POD and selector fields. Based on this information, a replicaSet instance keep track of pods. In above scenario by default, the `authentication-rs` keeps track of _only_ the PODs labeled  `authentication-api` to make sure desired number of these PODs are running but not the PODs labeled `login-api`. By using the command `kubectl describe replicaset authentication-rs`, the Events sections will list all the PODs which are being tracked by the replicaSet. All the pods created by the replicaSet adds a metadata label `ownerreferences`.
 
 ### ReplicaSet from POD perspective
 
-The pods deployed from the replicaSet can be identified by the names, as the start with the replicaSet name. In the above scenario, the pods names turnup something similar to `authentication-rs-ab1c2d`. Another option to find the details are by using the command `kubectl describe pod authentication-rs-ab1c2d`. The Events sections will list all the POD details, one of which will be `Controlled By:  ReplicaSet/authentication-rs`
+The pods deployed from the replicaSet can be identified by the names, as the start with the replicaSet name. In the above scenario, the pods names turnup something similar to `authentication-rs-ab1c2d`. Another option to find the details are by using the command `kubectl describe pod authentication-rs-ab1c2d`. The Events sections will list all the POD details, one of which will be `Controlled By:  ReplicaSet/authentication-rs`. Also notice that the metadata section of the POD contains `ownerReferences` with the replicaSet name `authentication-rs`. 
 
 ### Definition Files
 
