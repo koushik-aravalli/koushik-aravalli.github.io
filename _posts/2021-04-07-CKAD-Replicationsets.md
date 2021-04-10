@@ -33,8 +33,23 @@ Additional feature of a ReplicaSet is managing Pods those are not part the curre
 |-|-|-|-|
 |apps/v1|**ReplicaSet**|`name`<br/>`labels`| `template` &rarr; pod-definition <br/> `replicas` &rarr; integer <br/> `selector`|
 
+## Learning with example
 
-ReplicationController Definition File 
+Consider, within a K8S cluster there are already PODs, labeled `login-api`, running even before there exists a ReplicaSet. Now when a replicaSet, named `authentication-rs`, is created with template corresponding to same container image, as the running POD but labeled `authentication-api` on the selector.
+
+### POD from ReplicaSet Perspective
+
+The definition file for the ReplicaSet contains template of POD and selector fields. Based on this information, a replicaSet instance keep track of pods. In above scenario by default, the `authentication-rs` keeps track of _only_ the PODs labeled  `authentication-api` to make sure desired number of these PODs are running but not the PODs labeled `login-api`. By using the command `kubectl describe replicaset authentication-rs`, the Events sections will list all the PODs which are being tracked by the replicaSet. 
+
+### ReplicaSet from POD perspective
+
+The pods deployed from the replicaSet can be identified by the names, as the start with the replicaSet name. In the above scenario, the pods names turnup something similar to `authentication-rs-ab1c2d`. Another option to find the details are by using the command `kubectl describe pod authentication-rs-ab1c2d`. The Events sections will list all the POD details, one of which will be `Controlled By:  ReplicaSet/authentication-rs`
+
+### Definition Files
+
+Following below are sample Definition files to create a ReplicationController and a ReplicaSet
+
+#### ReplicationController Definition File 
 
 ```
 # replicationController-definition.yaml 
@@ -61,6 +76,8 @@ spec:
 
     replicas: 5
 ```
+
+#### ReplicaSet Definition File 
 
 ```
 # replicaSet-definition.yaml 
