@@ -43,6 +43,7 @@ For an applications that require multiple pod definition files, managing Environ
 ConfigMaps can be injected into a POD definition file either as ***Environment Variable*** or ***Single Environment Variable*** or ***Volume***
 
 ```
+## filename: web-configmap.yaml
 ## define configmap: web-config
 
 apiVersion: v1
@@ -56,6 +57,8 @@ data:
     DATABASE_NAME: Company_Project_mysqldb
     DATABASE_ADMIN: mysqlAdmin
 ```
+
+Using the command `kubectl create -f web-configmap.yaml`
 
 ***Environment Variable***
 
