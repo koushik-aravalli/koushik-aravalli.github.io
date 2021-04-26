@@ -101,11 +101,11 @@ specs:
         ports:
           - containerPort: 8080
         env:
-        - name: key1
+        - name: db_name # variable used within the pod
           valueFrom:
             configMapRef:
               name: web-config
-              key: key1
+              key: DATABASE_NAME # data key defined within configmap
 ``` 
 
 ***Volume Variable***
@@ -132,3 +132,22 @@ specs:
 ``` 
 
 #### Secrets
+
+Similar to a ConfigMap, Secrets are also defined as key-value pairs. The distinction remains at the value that is put in. The value is a base64 encoded string. Although it is not really safe to save as base64 encoded, atleast this minimizes the risk of accidental display of actual values. 
+
+Secrets are saved in etcd at the master node and are propagated to the nodes only when the pod needs it. kubelet on the node is responsible for the lifecycle management of the local copy of secrets within the node.
+
+Again 3 ways to refer secrets in POD definition file after being created. 
+
+```
+# secrets file definition
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: webapp-secret
+data:
+  DB_HOST: Company_Project_mysqldb
+  DB_ADMIN: root
+  DB_PASSWORD: P@$$w0rd
+```
