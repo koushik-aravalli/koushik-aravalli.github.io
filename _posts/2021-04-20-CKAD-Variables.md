@@ -73,14 +73,13 @@ metadata:
         key1: value1
 specs:
     containers:
-      - envFrom:
-        - configMapRef: 
-              name: web-config
-
       - name: nginx-webapp
         image: nginx
         ports:
           - containerPort: 8080
+        envFrom:
+        - configMapRef: 
+              name: web-config
 ``` 
 
 ***Single Environment Variable***
@@ -140,14 +139,60 @@ Secrets are saved in etcd at the master node and are propagated to the nodes onl
 Again 3 ways to refer secrets in POD definition file after being created. 
 
 ```
-# secrets file definition
+# secrets file definition: webapp-secret.yaml
 
 apiVersion: v1
 kind: Secret
 metadata:
   name: webapp-secret
 data:
-  DB_HOST: Company_Project_mysqldb
-  DB_ADMIN: root
-  DB_PASSWORD: P@$$w0rd
+  DB_HOST: Q29tcGFueV9Qcm9qZWN0X215c3FsZGI= ## base64 encoded Company_Project_mysqldb
+  DB_ADMIN: cm9vdA== ## base64 encoded root
+  DB_PASSWORD: UEAkJHcwcmQ= ## base64 encoded P@$$w0rd
 ```
+
+
+Inject into a POD as ***Environment Variable***
+
+```
+## reference configmap in defintion
+
+apiVersion: v1
+kind: Pod
+metadata:
+    name: web
+    lables:
+        key1: value1
+specs:
+    containers:
+      - name: nginx-webapp
+        image: nginx
+        ports:
+          - containerPort: 8080
+        envFrom:
+        - secretRef: 
+              name: webapp-secret
+``` 
+
+Inject into a POD as ***Volume Variable***
+
+```
+## reference configmap in defintion
+
+apiVersion: v1
+kind: Pod
+metadata:
+    name: web
+    lables:
+        key1: value1
+specs:
+    containers:
+      - name: nginx-webapp
+        image: nginx
+        ports:
+          - containerPort: 8080
+        volume:
+        - name: webapp-secret-volume
+          secret:
+              name: webapp-secret
+``` 
