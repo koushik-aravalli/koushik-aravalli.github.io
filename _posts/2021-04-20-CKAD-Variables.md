@@ -155,7 +155,7 @@ data:
 Inject into a POD as ***Environment Variable***
 
 ```
-## reference configmap in defintion
+## reference secret as environment variable in definition
 
 apiVersion: v1
 kind: Pod
@@ -177,7 +177,7 @@ specs:
 Inject into a POD as ***Volume Variable***
 
 ```
-## reference configmap in defintion
+## reference secret as volume in POD definition
 
 apiVersion: v1
 kind: Pod
