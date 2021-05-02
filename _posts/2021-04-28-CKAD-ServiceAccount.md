@@ -42,3 +42,26 @@ metadata:
     kubernetes.io/service-account.name: thridparty-app-npa
 type: kubernetes.io/service-account-token
 ```
+
+To add a ServiceAccount on a POD definition file:
+
+```
+# nginx-pod-definition.yaml
+
+apiVersion: v1
+
+kind: Pod
+
+metadata:
+    name: sample-app
+    labels:
+        app: api
+        type: frontend
+
+spec:
+    serviceAccountName: <name-of-new-serviceaccount>
+    containers:
+        - name: nginx-container
+          image: nginx
+```
+
