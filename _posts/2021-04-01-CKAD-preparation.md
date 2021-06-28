@@ -120,3 +120,7 @@ Output:
 #### Shutdown or Restart VM - Handle Minikube
 
 As the AzureVM is stopped and restarted after deallocation, in the backend the host at the Azure datacenter resets the _Virtualization_ settings. Therefore command to start the minikube will result in **Exiting due to PROVIDER_VIRTUALBOX_NOT_RUNNING: signal: killed**. So rerun the virtualization command as [above](#Enable-Virtualization-on-Azure-VM)
+
+### Test preparation references
+
+- [Mock questions](https://medium.com/bb-tutorials-and-thoughts/practice-enough-with-these-questions-for-the-ckad-exam-2f42d1228552)
