@@ -13,3 +13,10 @@ title: Create Self Sign cert with Root using OpenSSL
 > Note: Input fields will have common name to be added on the root
 
 1. Generate Self-Signed certificate (cer) from the root: `openssl x509 -req -days 365 -in lts-appgw.csr -signkey lts-appgw.key -out lts-appgw.crt`
+
+
+To create pfx for the cer file: 
+
+`openssl pkcs12 -inkey lts-appgw.key -in lts-appgw.crt -export -out lts-appgw.pfx`
+
+> Note: This prompts for password
