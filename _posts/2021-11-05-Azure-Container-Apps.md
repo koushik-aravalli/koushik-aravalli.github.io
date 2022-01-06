@@ -23,6 +23,7 @@ ACR_NAME='sampleregistry'
 az acr create -n $ACR_NAME -g $RESOURCE_GROUP_NAME --sku Basic --admin-enabled --allow-trusted-services --identity
 ```
 
+
 __Questions:__
 
 - How to install Container Apps extension in Azure CLI?
