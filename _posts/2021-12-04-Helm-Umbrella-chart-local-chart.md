@@ -1,6 +1,7 @@
 ﻿---
 layout: post
 title: Helm - Umbrella chart using local reference
+tags: k8s helm
 ---
 <!-- Post Content -->
 
@@ -62,3 +63,5 @@ Refer code __[here](https://github.com/koushik-aravalli/development/tree/master/
 
 Tags: `Helm`
 Categories: `Kubernetes`
+
+{% include archive.html %}
