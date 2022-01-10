@@ -6,7 +6,7 @@ module.exports = {
       summary: `dev`,
     },
     description: `A simple, fixed sidebar two columns Gatsby.js blog starter.`,
-    siteUrl: `https://koushik-aravalli.github.io`,
+    siteUrl: `https://koushik-aravalli.github.io/about-me`,
     social: {
       twitter: `koushikaravalli`,
     },
