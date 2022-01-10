@@ -1,20 +1,17 @@
-## About Me
+## Introduction
 
-Awesome!!! Here you are to know a little bit about me. Its been almost 8 years now that I have lived in the Netherlands with my wife and 3 years old. My roots are from south indian city, Hyderabad (another mini-IT hub). 
-I believe and noticed that living by profession can be achieved when we start changing our approach at work rather than searching interest in a new field. 
+Hello and Welcome to my blog. 
+<br/><br/>
+Imagine there is no google or any other search engines, would you have cornered that investigation which you picked? Would you have crossed so many challenges? 
+It is the community who helps and those brilliant ideas (always relative!!) that break through to solve our equations. 
+I believe through continuous learning and experience, that femto amps of spark lit to our brilliant ideas. 
 
-_My background_ I started learning programming not to achive anything but spend time with my sister before she left for her higher education. 
+<br/><br/>
 
-Basic program training on C and C++ and running the "HelloWorld" on that UNIX kernel box made me feel like I can create the whole world infact. That motivated me to continue further. 
+<i>The end of education is character</i>.. learn-implement-act-repeat that is what I do. 
 
-Learning is fun and it never ends, with continous evolution of IT (software/middleware/hardware) keeping up with the blog posts updates or refinements will keep me closer to my laptop.
+Embarking on a technical challenges that provide high business value or productivity assets leads to many reusable artifacts. 
 
-So, this blog is going to be a journey for me that focuses, highlights the aspects that I encounter. With the inspiration of industry experts and motivation from my collegues but surely will do my best to share experiences. 
+As and when I have such components I will be pushing to my git repo and reference it back to the post.
 
-__By the way, all ideas, thoughts, scribbles, scratches, code snippets, pushes mentioned here are my own not influenced by anyone nor reflections of my employer.__
-
-## I follow
-Every person who has an inspiring story which keeps him confident, motivated and a leader. 
-
-## Best quote
-_It is within the moments of a decision making that carves persons destiny._
+Looking forward to make it a habit.
