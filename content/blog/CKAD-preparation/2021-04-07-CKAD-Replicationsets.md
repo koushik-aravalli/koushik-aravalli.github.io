@@ -3,7 +3,7 @@ layout: post
 title: CKAD Preparation - ReplicationSets
 date: "2021-04-07"
 description: ""
-categories: [kubernetes ckad]
+tags: ["kubernetes", "ckad"]
 comments: true
 ---
 <!-- Post Content -->

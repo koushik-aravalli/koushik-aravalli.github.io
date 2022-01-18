@@ -3,7 +3,7 @@ layout: post
 title: Generate git graph locally without GIT!!!
 date: "2020-08-10"
 description: ""
-categories: [git]
+tags: ["git"]
 comments: true
 ---
 <!-- Post Content -->

@@ -3,7 +3,7 @@ layout: post
 title: Building AzureDevOps PipelineExtension
 date: "2021-07-13"
 description: ""
-categories: [azure-devops extension]
+tags: ["azure-devops", "extension"]
 comments: true
 ---
 <!-- Post Content -->

@@ -3,7 +3,7 @@ layout: post
 title: Using AzureDevOps Agent's OAuth to create branch
 date: "2021-03-14"
 description: ""
-categories: [azure-devops]
+tags: ["azure-devops"]
 comments: true
 ---
 <!-- Post Content -->

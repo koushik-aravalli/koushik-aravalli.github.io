@@ -3,7 +3,7 @@ layout: post
 title: Clone GitHub Repo from VSCode
 date: "2020-06-14"
 description: ""
-categories: [git]
+tags: ["git"]
 comments: true
 ---
 <!-- Post Content -->

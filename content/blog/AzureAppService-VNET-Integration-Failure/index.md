@@ -3,7 +3,7 @@ layout: post
 title: Azure App Service - VNET integration - Locks Subnet
 date: "2020-12-17"
 description: ""
-categories: [azure appservice network]
+tags: ["azure", "appservice", "network"]
 comments: true
 ---
 <!-- Post Content -->

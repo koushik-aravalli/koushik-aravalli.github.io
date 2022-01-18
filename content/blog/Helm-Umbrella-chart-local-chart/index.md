@@ -3,7 +3,7 @@ layout: post
 title: Helm - Umbrella chart using local reference
 date: "2021-12-04"
 description: ""
-categories: [k8s helm]
+tags: ["k8s","helm"]
 comments: true
 ---
 <!-- Post Content -->

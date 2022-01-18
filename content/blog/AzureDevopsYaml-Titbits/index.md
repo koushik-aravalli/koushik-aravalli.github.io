@@ -3,7 +3,7 @@ layout: post
 title: Azure Devops YAML titbits
 date: "2020-08-19"
 description: ""
-categories: [azure-devops yaml]
+tags: ["azure-devops", "yaml"]
 comments: true
 ---
 <!-- Post Content -->

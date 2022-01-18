@@ -3,7 +3,7 @@ layout: post
 title: CKAD Preparation - Variables
 date: "2021-04-20"
 description: ""
-categories: [kubernetes ckad]
+tags: ["kubernetes", "ckad"]
 comments: true
 
 ---

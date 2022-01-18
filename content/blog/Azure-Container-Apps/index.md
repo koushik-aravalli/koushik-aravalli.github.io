@@ -3,7 +3,7 @@ layout: post
 title: Deploying Application in Azure Container Apps
 date: "2021-11-07"
 description: "The new resource in Azure's, features of Kubernetes as PaaS"
-categories: [azure app container]
+tags: ["azure", "containers"]
 comments: true
 ---
 <!-- Post Content -->

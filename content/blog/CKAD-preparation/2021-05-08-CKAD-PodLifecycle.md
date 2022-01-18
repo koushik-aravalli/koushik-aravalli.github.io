@@ -3,7 +3,7 @@ layout: post
 title: CKAD Preparation - Pod Life cycle
 date: "2021-05-08"
 description: ""
-categories: [kubernetes ckad]
+tags: ["kubernetes", "ckad"]
 comments: true
 ---
 <!-- Post Content -->

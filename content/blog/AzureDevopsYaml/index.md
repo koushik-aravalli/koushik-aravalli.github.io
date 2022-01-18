@@ -3,7 +3,7 @@ layout: post
 title: Azure DevOps YAML Working models and challenges
 date: "2020-07-01"
 description: ""
-categories: [azure-devops]
+tags: ["azure-devops"]
 comments: true
 ---
 <!-- Post Content -->

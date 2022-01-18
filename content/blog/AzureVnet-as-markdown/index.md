@@ -3,7 +3,7 @@ layout: post
 title: Azure Network Solution as a Markdown
 date: "2021-02-17"
 description: ""
-categories: [azure network documentation]
+tags: ["azure", "network", "documentation"]
 comments: true
 ---
 <!-- Post Content -->

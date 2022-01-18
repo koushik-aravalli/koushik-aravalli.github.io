@@ -3,7 +3,7 @@ layout: post
 title: CKAD Preparation - Development Environment
 date: "2021-04-01"
 description: ""
-categories: [kubernetes ckad]
+tags: ["kubernetes", "ckad"]
 comments: true
 ---
 <!-- Post Content -->

@@ -4,7 +4,7 @@ title: git commands helper
 use_mermaid: true
 date: "2021-02-01"
 description: ""
-categories: [git]
+tags: ["git"]
 comments: true
 ---
 <!-- Post Content -->

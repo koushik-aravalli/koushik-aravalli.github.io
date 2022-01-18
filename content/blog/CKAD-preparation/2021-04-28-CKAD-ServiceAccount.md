@@ -3,7 +3,7 @@ layout: post
 title: CKAD Preparation - ServiceAccount
 date: "2021-04-28"
 description: ""
-categories: [kubernetes ckad]
+tags: ["kubernetes", "ckad"]
 comments: true
 
 ---

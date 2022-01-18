@@ -3,7 +3,7 @@ layout: post
 title: CKAD Preparation - Deployment
 date: "2021-04-09"
 description: ""
-categories: [kubernetes ckad]
+tags: ["kubernetes", "ckad"]
 comments: true
 
 ---

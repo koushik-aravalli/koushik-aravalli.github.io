@@ -4,7 +4,7 @@ title: Azure Function with Turnkey Authorization
 use_mermaid: true
 date: "2020-06-22"
 description: ""
-categories: [azure functionapp]
+tags: ["azure", "functionapp"]
 comments: true
 ---
 <!-- Post Content -->

@@ -2,7 +2,7 @@
 title: Create Self Sign certificate
 date: "2021-11-05T00:00:00.000Z"
 description: "Create Root and Client Self Sign Certificate using OpenSSL"
-categories: [certificate]
+tags: ["certificate"]
 comments: true
 ---
 <!-- Post Content -->

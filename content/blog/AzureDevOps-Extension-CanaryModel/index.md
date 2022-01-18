@@ -3,7 +3,7 @@ layout: post
 title: AzureDevOps Extension Canary deployed backed API
 date: "2021-08-06"
 description: ""
-categories: [azure-devops]
+tags: ["azure-devops"]
 comments: true
 ---
 <!-- Post Content -->
