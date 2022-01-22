@@ -1,3 +1,7 @@
+_site
+.sass-cache
+.jekyll-cache
+.jekyll-metadata
+vendor
+Gemfile.lock
 node_modules
-content/blog/.DS_Store
-content/.DS_Store
