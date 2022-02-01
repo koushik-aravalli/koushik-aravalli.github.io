@@ -24,6 +24,7 @@ type Data = {
           title: string
           date: string
           description: string
+          tags: [string]
         }
         fields: {
           slug: string
@@ -64,7 +65,8 @@ const BlogIndex = ({
                   {title}
                 </Link>
               </h3>
-              <small>{node.frontmatter.date}</small>
+              <small>{node.frontmatter.date}</small><br/>
+              {node.frontmatter.tags.map(tag=><small key={tag}><i>{tag}</i>&nbsp;&nbsp;&nbsp;</small>)}
             </header>
             <section>
               <p

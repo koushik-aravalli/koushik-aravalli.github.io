@@ -3,7 +3,7 @@ layout: post
 title: Understanding Azure Kubernetes Service with AAD
 date: "2021-09-30"
 description: "When working with AKS which is setup as part of Azure Landing zone, understanding Devops teams authorization boundaries is essential."
-tags: ["Azure-governance"]
+tags: ["azure-governance"]
 comments: true
 
 ---

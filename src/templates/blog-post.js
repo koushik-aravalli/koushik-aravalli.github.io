@@ -11,10 +11,9 @@ const BlogPostTemplate = ({ data, pageContext, location }) => {
   const { previous, next } = pageContext
 
   return (
-    <Layout location={location} title="Home">
+    <Layout location={location} title={siteTitle}>
       <SEO
         title={post.frontmatter.title}
-        keywords={post.frontmatter.tags}
         description={post.frontmatter.description || post.excerpt}
       />
       <article>
@@ -35,6 +34,13 @@ const BlogPostTemplate = ({ data, pageContext, location }) => {
           >
             {post.frontmatter.date}
           </p>
+          
+          <table className="table"><tbody><tr>
+            {post.frontmatter.tags.map( tag => 
+              <td className="td" key={tag}>{tag}</td>
+            )}
+          </tr></tbody></table>
+          
         </header>
         <section dangerouslySetInnerHTML={{ __html: post.html }} />
         <hr

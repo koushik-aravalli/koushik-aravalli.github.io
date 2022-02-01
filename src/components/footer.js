@@ -5,15 +5,8 @@ const Footer = () => {
     <footer className="my-12 text-center">
       © {new Date().getFullYear()}, Built with
       {` `}
-      <a href="https://www.gatsbyjs.org">Gatsby</a> and{" "}
-      <a
-        href="https://github.com/renyuanz/leonids"
-        target="_blank"
-        rel="noreferrer"
-      >
-        Leonids theme
-      </a>
-      .
+      <a href="https://www.gatsbyjs.org">Gatsby framework</a> by {" "}
+      <a href="https://www.linkedin.com/in/koushik-aravalli/">Koushik Aravalli</a>
     </footer>
   )
 }
