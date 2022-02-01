@@ -77,6 +77,7 @@ const Layout = ({ location, title, children }) => {
           {title}
         </Link>
       </h2>
+      <h4><Link to="/about-me">About</Link></h4>
     </>
   )
 

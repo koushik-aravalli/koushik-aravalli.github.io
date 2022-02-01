@@ -1,18 +1,17 @@
 import React from "react"
 import { Link, graphql } from "gatsby"
 
-import Bio from "../components/bio"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
 import { rhythm, scale } from "../utils/typography"
 
 const BlogPostTemplate = ({ data, pageContext, location }) => {
   const post = data.markdownRemark
-  // const siteTitle = data.site.siteMetadata.title
+  const siteTitle = data.site.siteMetadata.title
   const { previous, next } = pageContext
 
   return (
-    <Layout location={location} title="Home">
+    <Layout location={location} title={siteTitle}>
       <SEO
         title={post.frontmatter.title}
         description={post.frontmatter.description || post.excerpt}
@@ -35,6 +34,13 @@ const BlogPostTemplate = ({ data, pageContext, location }) => {
           >
             {post.frontmatter.date}
           </p>
+          
+          <table className="table"><tbody><tr>
+            {post.frontmatter.tags.map( tag => 
+              <td className="td" key={tag}>{tag}</td>
+            )}
+          </tr></tbody></table>
+          
         </header>
         <section dangerouslySetInnerHTML={{ __html: post.html }} />
         <hr
@@ -42,9 +48,7 @@ const BlogPostTemplate = ({ data, pageContext, location }) => {
             marginBottom: rhythm(1),
           }}
         />
-        <footer>
-          <Bio />
-        </footer>
+        <footer/>
       </article>
 
       <nav>
@@ -94,6 +98,7 @@ export const pageQuery = graphql`
         title
         date(formatString: "MMMM DD, YYYY")
         description
+        tags
       }
     }
   }

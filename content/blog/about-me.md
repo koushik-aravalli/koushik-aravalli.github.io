@@ -1,28 +1,17 @@
 ---
 title: About me
 date: "2020-06-23T00:00:00.000Z"
+tags: []
 ---
-## Introduction
 
-Hello and Welcome to my blog. 
+Hi and welcome to my blog. I am Koushik, working as a Software engineer for over 15 years. You can get in touch with me from my [LinkedIn Page](https://www.linkedin.com/in/koushik-aravalli/). 
 
-Imagine there is no google or any other search engines, would you have cornered that investigation which you picked? Would you have crossed so many challenges? 
+If you are still reading .. then this is my frame of thought
+
+Imagine there is no google or any other search engines, would we have cornered that investigation which we picked? Would we have crossed so many of our challenges? 
 It is the community who helps and those brilliant ideas (always relative!!) that break through to solve our equations. 
-I believe through continuous learning and experience, that femto amps of spark lit to our brilliant ideas. 
+I believe through continuous learning and experience, that femto amps of spark lit to our brilliant ideas. so learn-implement-act-repeat that is what I do. 
 
-
-<i>The end of education is character</i>.. so  learn-implement-act-repeat that is what I do. 
-
-Embarking on a technical challenges that provide high business value or productivity assets leads to many reusable artifacts. 
-
-As and when I have such components I will be pushing to my git repo and reference it back to the post.
-
-With the inspiration of industry experts and motivation from my colleagues but surely will do my best to share experiences. 
-
-__By the way, all ideas, thoughts, scribbles, scratches, code snippets, pushes mentioned here are my own not influenced by anyone nor reflections of my employer.__
-
-## What I follow
+***By the way, all ideas, thoughts, scribbles, scratches, code snippets, pushes mentioned here are my own not influenced by anyone nor reflections of my employer.***
 
 _It is within the moments of a decision making that carves persons destiny._
-
-Looking forward to make it a habit.

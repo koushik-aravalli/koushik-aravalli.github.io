@@ -1,11 +1,11 @@
 module.exports = {
   siteMetadata: {
-    title: `Koushik Aravalli`,
+    title: `Koushik's scribble`,
     author: {
       name: `@koushik_aravalli`,
-      summary: `dev`,
+      summary: `software engineer`,
     },
-    description: `A simple, fixed sidebar two columns Gatsby.js blog starter.`,
+    description: ``,
     siteUrl: `https://koushik-aravalli.github.io/about-me`,
     social: {
       twitter: `koushikaravalli`,
