@@ -1,0 +1,1679 @@
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Koushik's scribble]]></title><description><![CDATA[Koushik's scribble]]></description><link>https://koushik-aravalli.github.io/about-me</link><generator>GatsbyJS</generator><lastBuildDate>Wed, 08 Jun 2022 14:46:17 GMT</lastBuildDate><item><title><![CDATA[Access Kubernetes Dashboard with k8s v1.24]]></title><description><![CDATA[Local development of k8s using Docker Desktop is often what I do before deploying services on the Cloud platform. Last month, auto upgrade…]]></description><link>https://koushik-aravalli.github.io/about-me/k8s-dashboard-token/</link><guid isPermaLink="false">https://koushik-aravalli.github.io/about-me/k8s-dashboard-token/</guid><pubDate>Wed, 01 Jun 2022 00:00:00 GMT</pubDate><content:encoded>&lt;!-- Post Content --&gt;
+&lt;p&gt;Local development of k8s using Docker Desktop is often what I do before deploying services on the Cloud platform. Last month, auto upgrade of the local version to k8s caused unexpected behaviour of the service accounts. Bumping into &lt;a href=&quot;https://github.com/kubernetes/kubernetes/issues/110113&quot;&gt;Github Ref&lt;/a&gt; made it clear. &lt;/p&gt;
+&lt;p&gt;Kubernetes dashboard is one of them which is accessed using SA token. Starting v1.24 version no tokens are provided on service account creation, which improves security of the access and restricting adhoc usage. &lt;/p&gt;
+&lt;p&gt;So the basic steps to get the dashboard locally up and running:&lt;/p&gt;
+&lt;h3&gt;Install Prerequisites&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Install &lt;a href=&quot;https://www.docker.com/products/docker-desktop/&quot;&gt;Docker Desktop&lt;/a&gt; with Kubernetes - no additinal installation required for &lt;a href=&quot;https://kubernetes.io/docs/tasks/tools/install-kubectl-windows/&quot;&gt;kubectl&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Install &lt;a href=&quot;https://docs.microsoft.com/en-us/windows/wsl/install&quot;&gt;Windows Subsystem for Linux (wsl)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;(optional) &lt;a href=&quot;https://docs.microsoft.com/en-us/windows/terminal/install&quot;&gt;Windows Terminal&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;(optional) &lt;a href=&quot;https://ubuntu.com/tutorials/install-ubuntu-on-wsl2-on-windows-10#1-overview&quot;&gt;Ubuntu Terminal&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;Deploy Kubernetes Dashboard&lt;/h3&gt;
+&lt;p&gt;k8s provide default dashboard to monitor the resources within the cluster, deployed using the &lt;a href=&quot;https://raw.githubusercontent.com/kubernetes/dashboard/v2.5.0/aio/deploy/recommended.yaml&quot;&gt;recommended manifest(s)&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Notice that all the objects are within the namespace &lt;code class=&quot;language-text&quot;&gt;kubernetes-dashboard&lt;/code&gt; unlike &lt;code class=&quot;language-text&quot;&gt;kube-system&lt;/code&gt;. Upon deploying the manifest on the cluster &lt;code class=&quot;language-text&quot;&gt;kubectl apply &amp;lt;manifest-url&gt;&lt;/code&gt;, dashboard is almost ready for access. The dashboard is now exposed on port 443 within the cluster which needs to be mapped to localhost port. &lt;/p&gt;
+&lt;p&gt;Using &lt;code class=&quot;language-text&quot;&gt;kubectl proxy&lt;/code&gt;, exposes the Cluster API server on port 8001. Try validating the version&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;&gt; curl http://localhost:8001/api
+
+{
+  &quot;kind&quot;: &quot;APIVersions&quot;,
+  &quot;versions&quot;: [
+    &quot;v1&quot;
+  ],
+  &quot;serverAddressByClientCIDRs&quot;: [
+    {
+      &quot;clientCIDR&quot;: &quot;0.0.0.0/0&quot;,
+      &quot;serverAddress&quot;: &quot;192.168.65.4:6443&quot;
+    }
+  ]
+}&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h3&gt;Accessing the Dashboard&lt;/h3&gt;
+&lt;p&gt;The dashboard can be accessed using the url &lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/#/login&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 590px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/static/56d120b1be6bf13851db8be89fce6235/67471/2022-06-01-k8s-dashboard.jpg&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 52.02702702702703%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/jpeg;base64,/9j/2wBDABALDA4MChAODQ4SERATGCgaGBYWGDEjJR0oOjM9PDkzODdASFxOQERXRTc4UG1RV19iZ2hnPk1xeXBkeFxlZ2P/2wBDARESEhgVGC8aGi9jQjhCY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2P/wgARCAAKABQDASIAAhEBAxEB/8QAGAAAAwEBAAAAAAAAAAAAAAAAAAEDBAX/xAAWAQEBAQAAAAAAAAAAAAAAAAABAAL/2gAMAwEAAhADEAAAAewnfRA0Bf/EABkQAAIDAQAAAAAAAAAAAAAAAAADAhATIf/aAAgBAQABBQLKBksxWJ7Gv//EABYRAAMAAAAAAAAAAAAAAAAAAAABEf/aAAgBAwEBPwGIiP/EABcRAAMBAAAAAAAAAAAAAAAAAAABERL/2gAIAQIBAT8BrNM//8QAGBAAAwEBAAAAAAAAAAAAAAAAAAEyEIH/2gAIAQEABj8ClEIhHd//xAAYEAEAAwEAAAAAAAAAAAAAAAABEBEhUf/aAAgBAQABPyHrNIpW29T/AP/aAAwDAQACAAMAAAAQUC//xAAXEQEBAQEAAAAAAAAAAAAAAAABADFh/9oACAEDAQE/EBDLhf/EABcRAQEBAQAAAAAAAAAAAAAAAAEAEWH/2gAIAQIBAT8QTc1urf/EABsQAAICAwEAAAAAAAAAAAAAAAABEfEQIUGR/9oACAEBAAE/EFuXjKgoh5uaOW57n//Z&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;2022 06 01 k8s dashboard&quot;
+        title=&quot;2022 06 01 k8s dashboard&quot;
+        src=&quot;/static/56d120b1be6bf13851db8be89fce6235/1c72d/2022-06-01-k8s-dashboard.jpg&quot;
+        srcset=&quot;/static/56d120b1be6bf13851db8be89fce6235/a80bd/2022-06-01-k8s-dashboard.jpg 148w,
+/static/56d120b1be6bf13851db8be89fce6235/1c91a/2022-06-01-k8s-dashboard.jpg 295w,
+/static/56d120b1be6bf13851db8be89fce6235/1c72d/2022-06-01-k8s-dashboard.jpg 590w,
+/static/56d120b1be6bf13851db8be89fce6235/a8a14/2022-06-01-k8s-dashboard.jpg 885w,
+/static/56d120b1be6bf13851db8be89fce6235/67471/2022-06-01-k8s-dashboard.jpg 1072w&quot;
+        sizes=&quot;(max-width: 590px) 100vw, 590px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+      /&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;To securely accessf it, use the service account &lt;code class=&quot;language-text&quot;&gt;&lt;/code&gt; that is created during the dashboard deployment.&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;&gt; kubectl get sa -n kubernetes-dashboard
+NAME                   SECRETS   AGE
+default                0         27h
+kubernetes-dashboard   0         27h&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Before v1.24,, all service accounts were created with a token that is saved within the secrets. That way copying the token made it easier to login into the dashboard. But now there is no longer an auto-generated &lt;strong&gt;static&lt;/strong&gt; token. &lt;/p&gt;
+&lt;p&gt;Therefore, request a new token for the service account which is valid for 60 mins (default). &lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;kubectl create token kubernetes-dashboard -n kubernetes-dashboard&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;In the portal, select option as &lt;code class=&quot;language-text&quot;&gt;Token&lt;/code&gt; and paste the token to login.&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 590px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/static/b65fa1415a1617f07192fe81d547cf39/5fbb4/2022-06-01-k8s-dashboard-loggedin.jpg&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 35.810810810810814%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/jpeg;base64,/9j/2wBDABALDA4MChAODQ4SERATGCgaGBYWGDEjJR0oOjM9PDkzODdASFxOQERXRTc4UG1RV19iZ2hnPk1xeXBkeFxlZ2P/2wBDARESEhgVGC8aGi9jQjhCY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2P/wgARCAAHABQDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAEF/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAH/2gAMAwEAAhADEAAAAdmFgH//xAAXEAEAAwAAAAAAAAAAAAAAAAABAAIS/9oACAEBAAEFAgAxWYrP/8QAFBEBAAAAAAAAAAAAAAAAAAAAEP/aAAgBAwEBPwE//8QAFhEBAQEAAAAAAAAAAAAAAAAAABEB/9oACAECAQE/Aauv/8QAFhAAAwAAAAAAAAAAAAAAAAAAABAx/9oACAEBAAY/AlD/xAAaEAEAAgMBAAAAAAAAAAAAAAABAGERIaHw/9oACAEBAAE/IXAZ3co6zwWf/9oADAMBAAIAAwAAABAED//EABYRAAMAAAAAAAAAAAAAAAAAAAABEf/aAAgBAwEBPxCIiP/EABcRAQADAAAAAAAAAAAAAAAAAAARUWH/2gAIAQIBAT8QlbZ//8QAGhAAAQUBAAAAAAAAAAAAAAAAAQARUWHwIf/aAAgBAQABPxAIDOCHKAxqVY1a/9k=&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;2022 06 01 k8s dashboard loggedin&quot;
+        title=&quot;2022 06 01 k8s dashboard loggedin&quot;
+        src=&quot;/static/b65fa1415a1617f07192fe81d547cf39/1c72d/2022-06-01-k8s-dashboard-loggedin.jpg&quot;
+        srcset=&quot;/static/b65fa1415a1617f07192fe81d547cf39/a80bd/2022-06-01-k8s-dashboard-loggedin.jpg 148w,
+/static/b65fa1415a1617f07192fe81d547cf39/1c91a/2022-06-01-k8s-dashboard-loggedin.jpg 295w,
+/static/b65fa1415a1617f07192fe81d547cf39/1c72d/2022-06-01-k8s-dashboard-loggedin.jpg 590w,
+/static/b65fa1415a1617f07192fe81d547cf39/a8a14/2022-06-01-k8s-dashboard-loggedin.jpg 885w,
+/static/b65fa1415a1617f07192fe81d547cf39/fbd2c/2022-06-01-k8s-dashboard-loggedin.jpg 1180w,
+/static/b65fa1415a1617f07192fe81d547cf39/5fbb4/2022-06-01-k8s-dashboard-loggedin.jpg 1887w&quot;
+        sizes=&quot;(max-width: 590px) 100vw, 590px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+      /&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;Thats should be it to access the portal. During the deployment of the Dashboard in the manifest the, the role binding for the &lt;code class=&quot;language-text&quot;&gt;kubernetes-dashboard&lt;/code&gt; are scoped within the namespace. This is the reason the notification errors pop out on accessing the default namespace objects. Good practice is to create a new service account with required scope access.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Helm - Umbrella chart using local reference]]></title><description><![CDATA[Overview In many situations it is not always that the Helm chart that is created is built on public or shared packages. Especially, in local…]]></description><link>https://koushik-aravalli.github.io/about-me/Helm-Umbrella-chart-local-chart/</link><guid isPermaLink="false">https://koushik-aravalli.github.io/about-me/Helm-Umbrella-chart-local-chart/</guid><pubDate>Sat, 04 Dec 2021 00:00:00 GMT</pubDate><content:encoded>&lt;!-- Post Content --&gt;
+&lt;h2&gt;Overview&lt;/h2&gt;
+&lt;p&gt;In many situations it is not always that the Helm chart that is created is built on public or shared packages. Especially, in local developments, consider an API that is built on other building blocks. Building such complex charts which are interdependent are referred as &lt;strong&gt;&lt;a href=&quot;https://helm.sh/docs/howto/charts_tips_and_tricks/#complex-charts-with-many-dependencies&quot;&gt;“Umbrella charts”&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;h2&gt;Include subchart&lt;/h2&gt;
+&lt;p&gt;According to &lt;strong&gt;&lt;a href=&quot;https://helm.sh/docs/topics/charts/#chart-dependencies&quot;&gt;Helm documentation&lt;/a&gt;&lt;/strong&gt;, subcharts can be refereed from web server or local file system. Well direct reference to the file system does not work with &lt;code class=&quot;language-text&quot;&gt;file://&lt;/code&gt; and returns &lt;code class=&quot;language-text&quot;&gt;Error: INSTALLATION FAILED: found in Chart.yaml, but missing in charts/ directory: &amp;lt;dependent-chart-name&gt;&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Create two charts &lt;code class=&quot;language-text&quot;&gt;chartOne&lt;/code&gt; and &lt;code class=&quot;language-text&quot;&gt;chartTwo&lt;/code&gt;, and consider &lt;code class=&quot;language-text&quot;&gt;chartTwo&lt;/code&gt; depends on multiple instances on &lt;code class=&quot;language-text&quot;&gt;chartOne&lt;/code&gt;. &lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;helm create -n chartOne chartOne
+helm create -n chartTwo chartTwo&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;When referring subcharts from external webserver (registry), &lt;code class=&quot;language-text&quot;&gt;charts&lt;/code&gt; folder is created by &lt;code class=&quot;language-text&quot;&gt;helm create&lt;/code&gt; and followed by &lt;code class=&quot;language-text&quot;&gt;helm dependency update&lt;/code&gt; all dependent sub charts of the parent chart are downloaded in &lt;code class=&quot;language-text&quot;&gt;tgz&lt;/code&gt;. Since Helm version 3, &lt;code class=&quot;language-text&quot;&gt;helm serve&lt;/code&gt; is deprecated, therefore that is not an option. &lt;/p&gt;
+&lt;p&gt;To get this running, manually copy contents of &lt;code class=&quot;language-text&quot;&gt;chartOne&lt;/code&gt; into &lt;code class=&quot;language-text&quot;&gt;chartTwo\charts\&lt;/code&gt;. &lt;/p&gt;
+&lt;p&gt;In &lt;code class=&quot;language-text&quot;&gt;chartTwo\Chart.yaml&lt;/code&gt;, include dependencies tag with chartOne. &lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;dependencies:
+  - name: chartOne ## should match `name` in charts/subfolder `Chart.yaml`
+    charts: chartOne ## should match name of the subfolder in `charts`
+    # repository: &quot;file://../chartOne&quot; ## does not work!
+    version: &quot;0.1.0&quot; ## should match `version` in charts/subfolder `Chart.yaml`&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Consider another case when multiple instances of the same building block are required by the parent chart. The challenge could be with the &lt;code class=&quot;language-text&quot;&gt;Release.Name&lt;/code&gt; overlap, which causes chart installation failure. &lt;/p&gt;
+&lt;p&gt;To handle this, common practice is to update the default name of the subchart to ‘Chart.Name’ in the &lt;code class=&quot;language-text&quot;&gt;_helpers.tpl&lt;/code&gt;. &lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;{{- define &quot;chartOne.name&quot; -}}
+{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix &quot;-&quot; }}
+{{- end }}&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;In the parent chart &lt;code class=&quot;language-text&quot;&gt;chartTwo\Chart.yaml&lt;/code&gt;, under the dependencies tag include &lt;code class=&quot;language-text&quot;&gt;alias&lt;/code&gt; for each subchart. &lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;dependencies:
+  - name: chartOne
+    alias: first-instance ## release-name on the dependent chart
+    charts: chartOne
+    version: &quot;0.1.0&quot;
+
+  - name: chartOne
+    alias: second-instance ## release-name on the dependent chart
+    charts: chartOne
+    version: &quot;0.1.0&quot;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Refer code &lt;strong&gt;&lt;a href=&quot;https://github.com/koushik-aravalli/development/tree/master/helm&quot;&gt;here&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Tags: &lt;code class=&quot;language-text&quot;&gt;Helm&lt;/code&gt;
+Categories: &lt;code class=&quot;language-text&quot;&gt;Kubernetes&lt;/code&gt;&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Deploying Application in Azure Container Apps]]></title><description><![CDATA[The new resource in Azure’s town is Azure Container Apps. During last week Microsoft Ignite this was launched in preview. If you are…]]></description><link>https://koushik-aravalli.github.io/about-me/Azure-Container-Apps/</link><guid isPermaLink="false">https://koushik-aravalli.github.io/about-me/Azure-Container-Apps/</guid><pubDate>Sun, 07 Nov 2021 00:00:00 GMT</pubDate><content:encoded>&lt;!-- Post Content --&gt;
+&lt;p&gt;The new resource in Azure’s town is &lt;a href=&quot;https://azure.microsoft.com/en-us/services/container-apps/&quot;&gt;Azure Container Apps&lt;/a&gt;. During last week Microsoft Ignite this was launched in preview. If you are wondering what AWS equivalent, then it is Fargate, which was adopted widely by many AWS customers for medium scale workloads. My understanding for simplification of these services, Conatiner Apps or Fargate, is going &lt;strong&gt;Serverless Kubernetes&lt;/strong&gt;. &lt;/p&gt;
+&lt;p&gt;In my current migration project I had to go with Azure Kubernetes Service for the only reason there is no equivalent for Fargate. &lt;/p&gt;
+&lt;p&gt;Let me dive in, what am I going to do:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Get Docker running on local machine&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;If &lt;a href=&quot;https://docs.docker.com/desktop/&quot;&gt;Docker Desktop&lt;/a&gt; is already installed, just start it, check if the docker machine is running.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Create ACR, If not available&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;RESOURCE_GROUP_NAME=&apos;exploration&apos;
+ACR_NAME=&apos;sampleregistry&apos;
+
+az acr create -n $ACR_NAME -g $RESOURCE_GROUP_NAME --sku Basic --admin-enabled --allow-trusted-services --identity&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;strong&gt;Questions:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;How to install Container Apps extension in Azure CLI?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;az extension add --source https://workerappscliextension.blob.core.windows.net/azure-cli-extension/containerapp-0.2.0-py2.py3-none-any.whl -y&lt;/code&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Check az version: &lt;code class=&quot;language-text&quot;&gt;az --version&lt;/code&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;What all AZ CLI commands are available for Azure Container Apps?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;As of today, only one which is powerful enough to deploy a container from an existing Azure Container Registry &lt;/p&gt;</content:encoded></item><item><title><![CDATA[Create Self Sign certificate]]></title><description><![CDATA[3 steps to create certificate which also has common name on it. Here are the steps: Create Certificate Key:  Create Certificate Server Root…]]></description><link>https://koushik-aravalli.github.io/about-me/Self-Signed-Certificate/</link><guid isPermaLink="false">https://koushik-aravalli.github.io/about-me/Self-Signed-Certificate/</guid><pubDate>Fri, 05 Nov 2021 00:00:00 GMT</pubDate><content:encoded>&lt;!-- Post Content --&gt;
+&lt;p&gt;3 steps to create certificate which also has common name on it. Here are the steps:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Create Certificate Key: &lt;code class=&quot;language-text&quot;&gt;openssl genpkey -out lts-appgw.key -algorithm RSA -pkeyopt rsa_keygen_bits:2048&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Create Certificate Server Root (csr): &lt;code class=&quot;language-text&quot;&gt;openssl req -new -key lts-appgw.key -out lts-appgw.csr&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Note: Input fields will have common name to be added on the root&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;ol&gt;
+&lt;li&gt;Generate Self-Signed certificate (cer) from the root: &lt;code class=&quot;language-text&quot;&gt;openssl x509 -req -days 365 -in lts-appgw.csr -signkey lts-appgw.key -out lts-appgw.crt&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;To create pfx for the cer file: &lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;openssl pkcs12 -inkey lts-appgw.key -in lts-appgw.crt -export -out lts-appgw.pfx&lt;/code&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Note: This prompts for password&lt;/p&gt;
+&lt;/blockquote&gt;</content:encoded></item><item><title><![CDATA[Understanding Azure Kubernetes Service with AAD]]></title><description><![CDATA[When working with AKS which is setup as part of Azure Landing zone, understanding Devops teams authorization boundaries is essential.  There…]]></description><link>https://koushik-aravalli.github.io/about-me/AKS-with-AD/</link><guid isPermaLink="false">https://koushik-aravalli.github.io/about-me/AKS-with-AD/</guid><pubDate>Thu, 30 Sep 2021 00:00:00 GMT</pubDate><content:encoded>&lt;!-- Post Content --&gt;
+&lt;p&gt;When working with AKS which is setup as part of Azure Landing zone, understanding Devops teams authorization boundaries is essential. &lt;/p&gt;
+&lt;p&gt;There are quite a few topics to understand from the perspective of &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Team who is setting up the AKS Landing Zone who represent a product manufacturer&lt;/li&gt;
+&lt;li&gt;Team who will work with the AKS Landing Zone, who represent a product user&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;To get general understanding of AKS Landing Zone &lt;strong&gt;&lt;em&gt;&lt;a href=&quot;https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/aks/enterprise-scale-landing-zone#deploy-enterprise-scale-for-aks&quot;&gt;refer Azure documentation&lt;/a&gt;&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Secure Baseline Architecture of AKS stands on 6 pillars:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;Identity&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;Networking&lt;/li&gt;
+&lt;li&gt;Cluster compute&lt;/li&gt;
+&lt;li&gt;Secure data flow&lt;/li&gt;
+&lt;li&gt;Business Continuity&lt;/li&gt;
+&lt;li&gt;Operations&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Each of the topics cover vast regions of Azure implementations in depth, but this article describes a part of &lt;em&gt;Identity&lt;/em&gt; that the teams working with the AKS landing zone.&lt;/p&gt;
+&lt;h2&gt;Types of access&lt;/h2&gt;
+&lt;p&gt;&lt;em&gt;Kubernetes native RBAC&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Kubernetes by provides RBAC to regulate access to its nodes and its resources based on type of roles and their bindings to a scope of created users/groups. Checkout the &lt;a href=&quot;https://kubernetes.io/docs/reference/access-authn-authz/rbac/#restrictions-on-role-binding-creation-or-update&quot;&gt;manifest&lt;/a&gt;. Challenge here is that, at an &lt;em&gt;Enterprise&lt;/em&gt; mirroring the entire Active Directory(AD) into the K8S is not realistic. Team setting up the LandingZone should be provided with list of all developers from the Team who works with the AKS landing zone.&lt;/p&gt;
+&lt;p&gt;Similar to Service Accounts behaviour, which are K8S api generatable objects, administrators of the cluster have ability to request CA certificate signed by the Cluster for a user. Therefore, each user can have a certificate with their account name as common name on the certificate. At this point assuming there are certificates for all required personnel, different &lt;a href=&quot;https://kubernetes.io/docs/reference/access-authn-authz/authentication/#authentication-strategies&quot;&gt;Authorization Strategies&lt;/a&gt; can be applied to manage the users. Challenge here is that, at an &lt;em&gt;Enterprise&lt;/em&gt;, additional overhead of maintaining/governing AD within K8S along with the existing AD infrastructure. Landing zone provisioing team &lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Integrating Kubernetes RBAC with AzureAD&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;As mentioned above, it is possible to create accessibility for the users based on CA certificate signed by the Cluster. While executing this, identifying limited group of users with granualar access is an option. In the scope of Enterprise scale landing zone, possibility is AKS can be created the RBAC limited to the security group (who are the devops team members) of the Subscription. &lt;/p&gt;
+&lt;p&gt;Again the same challenge of governance and synchronizing between group members and certificate regeneration and resigning should be done by the Team who is provisioing the landing zone for every onboarding or retiring of developers of team who works with the Landing zone. &lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Built-In AzureAD RBAC&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Lets first list what are the built-in roles that Azure provides for AKS:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Azure Kubernetes Service Cluster Admin Role&lt;/li&gt;
+&lt;li&gt;Azure Kubernetes Service Cluster User Role&lt;/li&gt;
+&lt;li&gt;Azure Kubernetes Service Contributor Role&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Azure Kubernetes Service RBAC Admin&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Azure Kubernetes Service RBAC Cluster Admin&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Azure Kubernetes Service RBAC Reader&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Azure Kubernetes Service RBAC Writer&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Admin and Cluster Admin roles are limited to the Operators within the team, could be entire team as well but in a Production environment that is limited. Typically we notice the Landing zone provisioning team member being part of these roles. The Service Principals linked to the CI/CD accounts of the team working with the AKS cluster, to deploy their applications, are given Writer permissions and the team members themselves are provided with Reader roles. This approach is in line with the centralization of Active Directory, in with (Azure) cloud native approach, governance and security of applications (Service Principal) and users being regulated at one place, and single inferface with Azure &lt;/p&gt;
+&lt;p&gt;Based on the above analysis, AKS with AAD Built-in roles is a preffered approach for many enterprises starting with Landing zones on AKS.&lt;/p&gt;
+&lt;p&gt;Until now, the analysis is at AKS cluster level, now thinking a step further at the application level which is the second part of the AKS baseline architecture Identity is AAD for Workloads. That will be something for the next post.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[AzureDevOps Extension Canary deployed backed API]]></title><description><![CDATA[What and Why ?? Today evening I had a chance to speak at Azure Thursday Netherlands event. It is fantastic stage where I have been learning…]]></description><link>https://koushik-aravalli.github.io/about-me/AzureDevOps-Extension-CanaryModel/</link><guid isPermaLink="false">https://koushik-aravalli.github.io/about-me/AzureDevOps-Extension-CanaryModel/</guid><pubDate>Fri, 06 Aug 2021 00:00:00 GMT</pubDate><content:encoded>&lt;!-- Post Content --&gt;
+&lt;br/&gt;
+&lt;h2&gt;What and Why ??&lt;/h2&gt;
+&lt;p&gt;Today evening I had a chance to speak at Azure Thursday Netherlands event. It is fantastic stage where I have been learning from the community and experienced, on their efforts in keeping up with Azure. I was sharing my experience on building Azure DevOps Pipeline Extensions at Cloud Center of Excellences. Here is the &lt;a href=&quot;https://www.youtube.com/watch?v=kLHRA_ec1Zo&quot;&gt;YouTube link&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Ok that is not the What part noir the Why!! During the questions session, a very interesting one was how to manage canary deployments. Simple question, but something to think about to manage new features behavior. &lt;/p&gt;
+&lt;h2&gt;How to work with canary&lt;/h2&gt;
+&lt;p&gt;At CCoE’s, I have seen traditional implementation approach when Extension developments are done. Here is the view. &lt;/p&gt;
+&lt;p&gt; &lt;img src=&quot;../../assets2020-08-06-AzDevops-Extension.jpg?v=4&amp;#x26;s=50&quot;&gt;&lt;/p&gt;
+&lt;p&gt;Now when we rethink, &lt;a href=&quot;https://martinfowler.com/bliki/CanaryRelease.html#:~:text=Canary%20release%20is%20a%20technique,making%20it%20available%20to%20everybody.&quot;&gt;canary deployments&lt;/a&gt; are typical in a normal application developments when introducing new features in an application. We now we are working with software development that is managing the infrastructure on public cloud platform. In this post we are referring to the Azure as the landing zone and pipeline extensions are developed to target an Azure resource. A task within an extension, can call an ARM template or execute a PowerShell command from Azure PowerShell module or also invoke Azure Rest API to manage a resource. &lt;/p&gt;
+&lt;p&gt;So, here is one solution. &lt;/p&gt;
+&lt;p&gt; &lt;img src=&quot;../../assets2020-08-06-AzDevops-Canary-Approach.jpg?s=200&quot;&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Create extension with task(s)&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Create micro services (API Apps) performing&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Authentication / Authorization&lt;/li&gt;
+&lt;li&gt;Validation and Elevate permissions&lt;/li&gt;
+&lt;li&gt;Invoke Azure REST API to manage Azure Resource&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;While creating these microservice, the API App can be deployed in blue-green deployment model and can be configured according to divert the traffic. &lt;/p&gt;
+&lt;p&gt;That is it.. why not it is possible to have new features tested from Azure DevOps extension. I will illustrate this will an example in later posts.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Building AzureDevOps PipelineExtension]]></title><description><![CDATA[Why are we talking about building custom extension? To meet one or more objectives of a CCoE, out-of-box Azure Resources (Service) are…]]></description><link>https://koushik-aravalli.github.io/about-me/Building-AzureDevOps-PipelineExtension/</link><guid isPermaLink="false">https://koushik-aravalli.github.io/about-me/Building-AzureDevOps-PipelineExtension/</guid><pubDate>Tue, 13 Jul 2021 00:00:00 GMT</pubDate><content:encoded>&lt;!-- Post Content --&gt;
+&lt;br/&gt;
+&lt;h2&gt;Why are we talking about building custom extension?&lt;/h2&gt;
+&lt;p&gt;To meet one or more &lt;strong&gt;&lt;em&gt;&lt;a href=&quot;https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/organize/cloud-center-of-excellence#key-responsibilities&quot;&gt;objectives of a CCoE&lt;/a&gt;&lt;/em&gt;&lt;/strong&gt;, out-of-box Azure Resources (Service) are deployed with preapproved configuration sets, security controls and organization standards. Therefore, a need arises to box the required solution into one package which is reusable, idempotent and consistent across all working teams. &lt;/p&gt;
+&lt;p&gt;When working with Azure, infrastructure is provisioned using Azure Resource Manager &lt;em&gt;(basically an API)&lt;/em&gt;. ARM Templates, Azure CLI or Terraform are tools which interface with this API to provision any required Azure service. &lt;/p&gt;
+&lt;p&gt;DevOps and DevSecOps are already well known terms and are used in conjunction with automation in an application architecture. &lt;em&gt;Azure DevOps&lt;/em&gt; is one of the proven DevOps tool which is also customizable. Automating the infrastructure deployment (Infra-as-code) on Azure with Azure DevOps is a potential solution towards achieving the objectives. &lt;/p&gt;
+&lt;h2&gt;What are the steps to build an extension&lt;/h2&gt;
+&lt;p&gt;An Extension adds new capabilities to Azure DevOps environment. These capabilities are termed as &lt;strong&gt;&lt;em&gt;Contributions&lt;/em&gt;&lt;/strong&gt;. A Contribution can be of type &lt;code class=&quot;language-text&quot;&gt;hub&lt;/code&gt;, &lt;code class=&quot;language-text&quot;&gt;action&lt;/code&gt;, &lt;code class=&quot;language-text&quot;&gt;build-task&lt;/code&gt; which is a unit of work or a building block that makes a pipeline. &lt;/p&gt;
+&lt;p&gt;To build an extension with one or more tasks:
+Using simple ARM deployment, lets build an Azure DevOps Extension in 5 steps.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;Step 1&lt;/em&gt;&lt;/strong&gt;: PowerShell script with Azure Modules invoking ARM template&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;Step 2&lt;/em&gt;&lt;/strong&gt;: Download To wrap the scripts as an extension, download the dependent modules (more like SDKs) from &lt;a href=&quot;https://github.com/microsoft/azure-pipelines-tasks/tree/master/Tasks/Common&quot;&gt;Azure DevOps GitHub&lt;/a&gt;, Save it to folder &lt;code class=&quot;language-text&quot;&gt;ps_modules&lt;/code&gt;. (Yes the name should be exactly that!!)
+* VstsTaskSDK
+* VstsAzureRestHelper
+* VstsAzureHelper
+* TlsHelper (Common library handling security)&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;Step 3&lt;/em&gt;&lt;/strong&gt;: Create entry point by adding Invoke script - &lt;code class=&quot;language-text&quot;&gt;main.ps1&lt;/code&gt;. User input is captured using &lt;code class=&quot;language-text&quot;&gt;Get-VstsInput&lt;/code&gt;, a parameter object is created to fulfil the ARM template requirements. &lt;/p&gt;
+&lt;p&gt;&lt;em&gt;In case RestAPI is used instead of ARM templates, POST operation payload can also be gathered as input.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;Step 4&lt;/em&gt;&lt;/strong&gt;: Make this as task. Task acts an interface to collect required information (Parameters).. consider it as a UI. Add &lt;code class=&quot;language-text&quot;&gt;task.json&lt;/code&gt;. &lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;task.json main.ps1&lt;/code&gt; bridges across user and the script that were created in first step. &lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;Step 5&lt;/em&gt;&lt;/strong&gt;: Wrap every thing into an Extension - &lt;code class=&quot;language-text&quot;&gt;vss-extension.json&lt;/code&gt;
+* Take ownership by assigning it to an Organization
+* Embed tasks
+* Beautify it with icon&lt;/p&gt;
+&lt;h2&gt;Test your extension - Locally&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;Step 1&lt;/em&gt;&lt;/strong&gt;: Import required Azure Modules &lt;code class=&quot;language-text&quot;&gt;Import-Module Az&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;Step 2&lt;/em&gt;&lt;/strong&gt;: Import VstsSdk Module &lt;code class=&quot;language-text&quot;&gt;Import-Module .\ps_modules\VstsTaskSdk\VstsTaskSdk.psd1 -Global&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;Step 3&lt;/em&gt;&lt;/strong&gt;: Get Azure context &lt;code class=&quot;language-text&quot;&gt;Login-AzAccoount&lt;/code&gt; &lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;Step 4&lt;/em&gt;&lt;/strong&gt;: Execute entry point script &lt;code class=&quot;language-text&quot;&gt;main.ps1&lt;/code&gt;. During execution, each input will be prompted in the attached terminal.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Note - Since Azure Context is already provided at Step 3, Ignore the values for &lt;code class=&quot;language-text&quot;&gt;ConnectedServiceNameSelector&lt;/code&gt;, &lt;code class=&quot;language-text&quot;&gt;ConnectedServiceName&lt;/code&gt;, &lt;code class=&quot;language-text&quot;&gt;Service Endpoint Url&lt;/code&gt; can be left empty. Safely ignore the pop out log errors&lt;/em&gt; &lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;##vso[task.logissue type=error]Required: &apos;&apos; service endpoint URL
+##vso[task.logissue type=error]Cannot bind argument to parameter &apos;Endpoint&apos; because it is null.&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;Step 5&lt;/em&gt;&lt;/strong&gt;: Login to Azure and validate deployed resource if it meets the required controls&lt;/p&gt;
+&lt;h2&gt;Package and Publish - Locally&lt;/h2&gt;
+&lt;p&gt;TFS cli (tfx) is offered as an npm package. To perform actions locally, NodeJS installation is a requirement.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;Package&lt;/em&gt;&lt;/strong&gt;: Navigate to the extension directory. &lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;tfx extension create --manifests vss-extension.json&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;Publish&lt;/em&gt;&lt;/strong&gt;: &lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;tfx extension create --manifests vss-extension.json&lt;/code&gt;&lt;/p&gt;
+&lt;h2&gt;Package and Publish - Pipeline&lt;/h2&gt;
+&lt;p&gt;As the number of custom extensions grow, having the entire deployment cycle with Querying latest extension, Packaging the extension and Publishing the extension will be redundant. And more importantly, automating the extension publishing remove the overhead of manual interactions. &lt;/p&gt;
+&lt;p&gt;Here is the Job template to publish extension in an Azure DevOps Organization&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;{% raw %}
+## Deploy Extension Job Template
+
+parameters:
+  extension_name: &apos;&apos;
+  extension_path: &apos;&apos;
+  service_connection: &apos;&apos;
+
+jobs:
+- job: &quot;Deploy_Extension&quot;
+  pool:
+    vm_image: windows-latest
+  variables:
+    Extension.Name: ${{ parameters.extension_name }}
+  steps:
+    - task: ms-devlabs.vsts-developer-tools-build-tasks.extension-version-build-task.QueryAzureDevOpsExtensionVersion@2
+      displayName: &apos;Query Extension Version&apos;
+      inputs:
+        connectedServiceName: ${{parameters.service_connection}}
+        publisherId: Koushik-Aravalli ## Change accordingly, publisherId doesnt seem to support variablization
+        extensionId: $(Extension.Name)
+        versionAction: Patch
+        outputVariable: QueryExtension.Version
+        extensionVersionOverride: QueryExtension.VersionOverride
+
+    - task: ms-devlabs.vsts-developer-tools-build-tasks.package-extension-build-task.PackageAzureDevOpsExtension@2
+      displayName: &apos;Package Extension&apos;
+      inputs:
+        rootFolder: ${{ parameters.extension_path }}
+        outputPath: output/vstspackage.vsix
+        extensionVersion: &apos;$(QueryExtension.Version)&apos;
+        updateTasksVersion: true
+        updateTasksVersionType: patch
+        extensionVisibility: private
+        outputVariable: CreateExtension.OutputPath
+
+    - task: PublishBuildArtifacts@1
+      displayName: &apos;Publish Artifact: output&apos;
+      inputs:
+        PathtoPublish: &quot;$(CreateExtension.OutputPath)&quot;
+        ArtifactName: output
+
+    - task: ms-devlabs.vsts-developer-tools-build-tasks.publish-extension-build-task.PublishAzureDevOpsExtension@2
+      displayName: &apos;Publish Extension&apos;
+      inputs:
+        connectedServiceName: ${{ parameters.service_connection }}
+        fileType: vsix
+        vsixFile: $(CreateExtension.OutputPath)
+        publisherId: Koushik-Aravalli ## Change accordingly, publisherId doesnt seem to support variablization
+        extensionId: $(Extension.Name)
+        extensionName: $(Extension.Name)
+        updateTasksVersion: false
+{% endraw %}&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Invoke the template&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;## Extension deployment pipeline
+
+variables:
+    extension_name: &apos;sample-extension&apos;
+    extension_location: &apos;SampleExtension&apos; # Name of the extension root folder
+jobs:
+  - template: deploy-extension.yaml
+    parameters:
+      extension_name: $(extension_name)
+      extension_path: $(extension_location)
+      service_connection: &quot;azdevops-extension-spn&quot;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Here is the &lt;strong&gt;&lt;em&gt;&lt;a href=&quot;https://github.com/koushik-aravalli/azuredevops-pipeline-extension&quot;&gt;extension code&lt;/a&gt;&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;</content:encoded></item><item><title><![CDATA[CKAD Preparation - Pod Life cycle]]></title><description><![CDATA[Lifecycle of a Pod Every Pod, has a status which is reached after meeting certain conditions. The Status of a pod gives information about…]]></description><link>https://koushik-aravalli.github.io/about-me/CKAD-preparation/2021-05-08-CKAD-PodLifecycle/</link><guid isPermaLink="false">https://koushik-aravalli.github.io/about-me/CKAD-preparation/2021-05-08-CKAD-PodLifecycle/</guid><pubDate>Sat, 08 May 2021 00:00:00 GMT</pubDate><content:encoded>&lt;!-- Post Content --&gt;
+&lt;h3&gt;Lifecycle of a Pod&lt;/h3&gt;
+&lt;p&gt;Every Pod, has a status which is reached after meeting certain conditions. The Status of a pod gives information about the current stage of the Pod in its lifecycle.&lt;/p&gt;
+&lt;p&gt;There are 4 possible states that a Pod can attain&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Pending: When the API-Services on the control plane of the K8S receives a create command, after successful evaluation Scheduler searches for Node where the Pod can be placed. Until the scheduler finds a location, POD stays in this state. If scheduler cannot find where to place, the Pod remain in Pending state. To understand why it is not placed, use &lt;code class=&quot;language-text&quot;&gt;kubectl describe &amp;lt;podname&gt;&lt;/code&gt; &lt;/li&gt;
+&lt;li&gt;ContainerCreating: After the Pod is scheduled to be placed on a Node and placed within, all the dependencies like the Images are pulled, configurations (configMap, Secrets, ServiceAccounts) are all gathered. Until commands and arguments are evaluated and exectued successfully, Pod state remain unchanged. &lt;/li&gt;
+&lt;li&gt;Running: Once all the containers in the Pod are successful and ready to be servered, until termination it remains in this state&lt;/li&gt;
+&lt;li&gt;Deleting: This state of the Pod happens due to either kubectl delete or Node Eviction or Node Taints are applied. &lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;At any point of time, using &lt;code class=&quot;language-text&quot;&gt;kubectl describe&lt;/code&gt; behavior of a Pod can be understood. In the output of this command, notice that there is a section Conditions. &lt;/p&gt;
+&lt;h3&gt;Probing for Readiness&lt;/h3&gt;
+&lt;p&gt;To get a Pod to a Running state, four conditions are met - &lt;code class=&quot;language-text&quot;&gt;PodScheduled&lt;/code&gt;, &lt;code class=&quot;language-text&quot;&gt;Initialized&lt;/code&gt;, &lt;code class=&quot;language-text&quot;&gt;ContainersReady&lt;/code&gt; and &lt;code class=&quot;language-text&quot;&gt;Ready&lt;/code&gt;. Each of these are bolean values. &lt;/p&gt;
+&lt;p&gt;A Pod could contain container(s) which are light weight, like running bash script, which could start in milliseconds or heavy weight, like running a monolith webservice, which could take time to be ready to accept requests. In the later case, although the state of the Pod can show as &lt;code class=&quot;language-text&quot;&gt;Running&lt;/code&gt; and the condition &lt;code class=&quot;language-text&quot;&gt;Ready&lt;/code&gt; is true, K8S assumes that even the application is Ready to accept requests. This is becuase there is no link between the condition and actual state of the application within the container. &lt;/p&gt;
+&lt;p&gt;Hence, there will be instances where application is still preparing while the requests rush in. To bridge this gap, with good understanding of the application, a probe test can be created within the application to respond if the applicaiton is infact ready to accept requests. &lt;/p&gt;
+&lt;p&gt;There are 3 ways to have a probe test within the Pod - &lt;code class=&quot;language-text&quot;&gt;HTTP&lt;/code&gt; or &lt;code class=&quot;language-text&quot;&gt;TCP&lt;/code&gt; or &lt;code class=&quot;language-text&quot;&gt;Execute Command&lt;/code&gt;. All there can be combined with interval The result of this endup being giving handle on &lt;code class=&quot;language-text&quot;&gt;Readiness&lt;/code&gt; of the Pod. &lt;/p&gt;
+&lt;h3&gt;Probing for Liveness&lt;/h3&gt;
+&lt;p&gt;After deploying a Pod with a readiness probe, actual state of the application is known to K8S. Now when the application is ready to serve the requests but if it doesnt respond with a successful result, then application is still not considered to be live for the customers. Hence, there is also a need for a full check of a response as well to have the state as Ready. Similar to Readiness Probe, Pod state can be maintained accurate based on the applicaiton within’s liveliness. One of the &lt;code class=&quot;language-text&quot;&gt;HTTP&lt;/code&gt; or &lt;code class=&quot;language-text&quot;&gt;TCP&lt;/code&gt; or &lt;code class=&quot;language-text&quot;&gt;Execute Command&lt;/code&gt; can be used to test the liveliness of a Pod.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[CKAD Preparation - ServiceAccount]]></title><description><![CDATA[ServiceAccount are non personal (user) accounts which are/can be used by third party applications to authorize against the applications…]]></description><link>https://koushik-aravalli.github.io/about-me/CKAD-preparation/2021-04-28-CKAD-ServiceAccount/</link><guid isPermaLink="false">https://koushik-aravalli.github.io/about-me/CKAD-preparation/2021-04-28-CKAD-ServiceAccount/</guid><pubDate>Wed, 28 Apr 2021 00:00:00 GMT</pubDate><content:encoded>&lt;!-- Post Content --&gt;
+&lt;p&gt;ServiceAccount are non personal (user) accounts which are/can be used by third party applications to authorize against the applications hosted within K8S. For example, consider the image required to create a container in the POD is from a private registry. In this case, start by creating a secret with registry credentials, create a ServiceAccount by including the &lt;code class=&quot;language-text&quot;&gt;imagePullSecrets&lt;/code&gt; with the created secret. Now, in the POD definition include ServiceAccount as mounted volume. &lt;/p&gt;
+&lt;p&gt;Each ServiceAccount when created contains 3 keyvalue pairs: &lt;code class=&quot;language-text&quot;&gt;token&lt;/code&gt;, &lt;code class=&quot;language-text&quot;&gt;ca.cert&lt;/code&gt;, &lt;code class=&quot;language-text&quot;&gt;namespace&lt;/code&gt;. Out of which token is a secret that is mounted.&lt;/p&gt;
+&lt;p&gt;To create Service Account:&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;# serviceaccount definition
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: prometheus-npa
+secrets:
+  - name: &amp;lt;name-of-secret&gt;
+imagePullSecrets:
+  - name: &amp;lt;name-of-registry-secret&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;kubectl create serviceaccount &amp;lt;name-of-service-account&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Within K8S &lt;code class=&quot;language-text&quot;&gt;default&lt;/code&gt; ServiceAccount is provide which is added to each deployed POD. To list the ServiceAccount mounted within a running POD, login into the POD using &lt;code class=&quot;language-text&quot;&gt;exec&lt;/code&gt; command and browse to &lt;code class=&quot;language-text&quot;&gt;/var/run/secrets/kubernetes.io/serviceaccount&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;On the master node, the &lt;code class=&quot;language-text&quot;&gt;Token Controller&lt;/code&gt; maintains the lifecycle of the tokens within the ServiceAccounts. It checks and invalidates the token if either POD or ServiceAccount are deleted from K8S. On the worker node, the Kubelet is responsible for refreshing the token. The application within the POD is responsible for pulling the latest token.&lt;/p&gt;
+&lt;p&gt;Secret can be attached to an existing ServiceAccount from the Secret definition file:&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;apiVersion: v1
+kind: Secret
+metadata:
+  name: new-registry-secret
+  annotations:
+    kubernetes.io/service-account.name: thridparty-app-npa
+type: kubernetes.io/service-account-token&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;To add a ServiceAccount on a POD definition file:&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;# nginx-pod-definition.yaml
+
+apiVersion: v1
+
+kind: Pod
+
+metadata:
+    name: sample-app
+    labels:
+        app: api
+        type: frontend
+
+spec:
+    serviceAccountName: &amp;lt;name-of-new-serviceaccount&gt;
+    containers:
+        - name: nginx-container
+          image: nginx&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</content:encoded></item><item><title><![CDATA[CKAD Preparation - Variables]]></title><description><![CDATA[Injecting Data into a Container is a frequent requirement. That is apps running as a container may need settings for connecting to databases…]]></description><link>https://koushik-aravalli.github.io/about-me/CKAD-preparation/2021-04-20-CKAD-Variables/</link><guid isPermaLink="false">https://koushik-aravalli.github.io/about-me/CKAD-preparation/2021-04-20-CKAD-Variables/</guid><pubDate>Tue, 20 Apr 2021 00:00:00 GMT</pubDate><content:encoded>&lt;!-- Post Content --&gt;
+&lt;p&gt;Injecting Data into a Container is a frequent requirement. That is apps running as a container may need settings for connecting to databases, endpoints of other external apps, passwords or certificates to manage sensitive data and many more. To handle this K8S provides 3 ways to manage these variables. &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;/Environment&quot;&gt;Environment&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;/ConfigMaps&quot;&gt;ConfigMaps&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;/Secrets&quot;&gt;Secret&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;Environment&lt;/h4&gt;
+&lt;p&gt;Variables declared in the POD definition file are saved in keyvalue pair.&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;## POD definition file with Environment variables
+
+apiVersion: v1
+kind: Pod
+metadata:
+    name: web
+    lables:
+        key1: value1
+specs:
+    containers:
+      - name: nginx-webapp
+        image: nginx
+        ports:
+          - containerPort: 8080
+        env:
+        - name: DATABASE_NAME
+          value: Company_Project_mysqldb
+        - name: DATABASE_ADMIN
+          value: mysqlAdmin&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h4&gt;ConfigMaps&lt;/h4&gt;
+&lt;p&gt;For an applications that require multiple pod definition files, managing Environment Variables in each files becomes difficult to manage. Therefore, with a config file the environment variables are all managed at single location and it can be referenced across multiple definition files.&lt;/p&gt;
+&lt;p&gt;ConfigMaps can be injected into a POD definition file either as &lt;strong&gt;&lt;em&gt;Environment Variable&lt;/em&gt;&lt;/strong&gt; or &lt;strong&gt;&lt;em&gt;Single Environment Variable&lt;/em&gt;&lt;/strong&gt; or &lt;strong&gt;&lt;em&gt;Volume&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;## filename: web-configmap.yaml
+## define configmap: web-config
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: web-config
+    lables:
+        key1: value1
+        key2: value2
+data:
+    DATABASE_NAME: Company_Project_mysqldb
+    DATABASE_ADMIN: mysqlAdmin&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Using the command &lt;code class=&quot;language-text&quot;&gt;kubectl create -f web-configmap.yaml&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;Environment Variable&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;## reference configmap in defintion
+
+apiVersion: v1
+kind: Pod
+metadata:
+    name: web
+    lables:
+        key1: value1
+specs:
+    containers:
+      - name: nginx-webapp
+        image: nginx
+        ports:
+          - containerPort: 8080
+        envFrom:
+        - configMapRef: 
+              name: web-config&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;Single Environment Variable&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;## reference configmap in defintion
+
+apiVersion: v1
+kind: Pod
+metadata:
+    name: web
+    lables:
+        key1: value1
+specs:
+    containers:
+      - name: nginx-webapp
+        image: nginx
+        ports:
+          - containerPort: 8080
+        env:
+        - name: db_name # variable used within the pod
+          valueFrom:
+            configMapRef:
+              name: web-config
+              key: DATABASE_NAME # data key defined within configmap&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;Volume Variable&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;## reference configmap in defintion
+
+apiVersion: v1
+kind: Pod
+metadata:
+    name: web
+    lables:
+        key1: value1
+specs:
+    containers:
+      - name: nginx-webapp
+        image: nginx
+        ports:
+          - containerPort: 8080
+        volume:
+        - name: web-config-volume
+          configMap:
+              name: web-config&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h4&gt;Secrets&lt;/h4&gt;
+&lt;p&gt;Similar to a ConfigMap, Secrets are also defined as key-value pairs. The distinction remains at the value that is put in. The value is a base64 encoded string. Although it is not really safe to save as base64 encoded, atleast this minimizes the risk of accidental display of actual values. &lt;/p&gt;
+&lt;p&gt;Secrets are saved in etcd at the master node and are propagated to the nodes only when the pod needs it. kubelet on the node is responsible for the lifecycle management of the local copy of secrets within the node.&lt;/p&gt;
+&lt;p&gt;Again 3 ways to refer secrets in POD definition file after being created. &lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;# secrets file definition: webapp-secret.yaml
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: webapp-secret
+data:
+  DB_HOST: Q29tcGFueV9Qcm9qZWN0X215c3FsZGI= ## base64 encoded Company_Project_mysqldb
+  DB_ADMIN: cm9vdA== ## base64 encoded root
+  DB_PASSWORD: UEAkJHcwcmQ= ## base64 encoded P@$$w0rd&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Inject into a POD as &lt;strong&gt;&lt;em&gt;Environment Variable&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;## reference secret as environment variable in definition
+
+apiVersion: v1
+kind: Pod
+metadata:
+    name: web
+    lables:
+        key1: value1
+specs:
+    containers:
+      - name: nginx-webapp
+        image: nginx
+        ports:
+          - containerPort: 8080
+        envFrom:
+        - secretRef: 
+              name: webapp-secret&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Inject into a POD as &lt;strong&gt;&lt;em&gt;Volume Variable&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;## reference secret as volume in POD definition
+
+apiVersion: v1
+kind: Pod
+metadata:
+    name: web
+    lables:
+        key1: value1
+specs:
+    containers:
+      - name: nginx-webapp
+        image: nginx
+        ports:
+          - containerPort: 8080
+        volume:
+        - name: webapp-secret-volume
+          secret:
+              name: webapp-secret&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</content:encoded></item><item><title><![CDATA[CKAD Preparation - Deployment]]></title><description><![CDATA[The Deployment Controller within K8S is responsible for reinstating the state of the application based on the definition. A Deployment…]]></description><link>https://koushik-aravalli.github.io/about-me/CKAD-preparation/2021-04-09-CKAD-Deployments/</link><guid isPermaLink="false">https://koushik-aravalli.github.io/about-me/CKAD-preparation/2021-04-09-CKAD-Deployments/</guid><pubDate>Fri, 09 Apr 2021 00:00:00 GMT</pubDate><content:encoded>&lt;!-- Post Content --&gt;
+&lt;p&gt;The Deployment Controller within K8S is responsible for reinstating the state of the application based on the definition. A Deployment definition can be created to deploy ReplicaSet there by PODs or Delete the same. Deployment process typically have requirements to create new version of application, upgrade to next version of application, scale it as per load, rollback in case of failure. All these actions to be performed with minimal downtime. Deployment in K8S fulfil these requirements by default. Read through the &lt;a href=&quot;https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#use-case&quot;&gt;use cases&lt;/a&gt; &lt;/p&gt;
+&lt;h3&gt;Definition File&lt;/h3&gt;
+&lt;p&gt;The only difference between Deployment and ReplicaSet definitions files is the &lt;code class=&quot;language-text&quot;&gt;kind&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;# deployment-definition.yaml 
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: myapp-deployment
+    labels:
+        app: myapp
+spec:
+    replicas: 5
+    selector: 
+        matchLabels:
+            type: frontend
+    template:
+        # Pod definition
+        metadata:
+            name: sample-app
+            labels:
+                app: myapp
+                type: frontend
+        spec:
+            containers:
+                - name: nginx-container
+                  image: nginx:1.14.2&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h3&gt;Commands&lt;/h3&gt;
+&lt;p&gt;K8S Deployments is capable of performing &lt;strong&gt;rolling update&lt;/strong&gt; only when the POD’s image is updated. So for example, &lt;code class=&quot;language-text&quot;&gt;kubectl set image deployment.v1.apps/&amp;lt;deployment-name&gt;&lt;/code&gt;. Make sure the labels are untouched. Status check can be performed with &lt;code class=&quot;language-text&quot;&gt;kubectl rollout status deployment/&amp;lt;deployment-name&gt;&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;So, now if the version needs a &lt;strong&gt;rollback&lt;/strong&gt; - &lt;code class=&quot;language-text&quot;&gt;kubectl rollout undo deployment.v1.apps/&amp;lt;deployment-name&gt;&lt;/code&gt;. If to a specific version &lt;code class=&quot;language-text&quot;&gt;kubectl rollout undo deployment.v1.apps/&amp;lt;deployment-name&gt;  --to-revision=&amp;lt;image-version-number&gt;&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Now, to scale number of PODs for a deployment, &lt;code class=&quot;language-text&quot;&gt;kubectl scale deployment.v1.apps/&amp;lt;deployment-name&gt; --replicas=10&lt;/code&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Note&lt;/strong&gt;: Do not manage ReplicateSet created from a Deployment. &lt;/p&gt;
+&lt;/blockquote&gt;</content:encoded></item><item><title><![CDATA[CKAD Preparation - ReplicationSets]]></title><description><![CDATA[Controllers (yes multiple) keep track of all the activities and monitors each of them to respond accordingly in case of change of behavior…]]></description><link>https://koushik-aravalli.github.io/about-me/CKAD-preparation/2021-04-07-CKAD-Replicationsets/</link><guid isPermaLink="false">https://koushik-aravalli.github.io/about-me/CKAD-preparation/2021-04-07-CKAD-Replicationsets/</guid><pubDate>Wed, 07 Apr 2021 00:00:00 GMT</pubDate><content:encoded>&lt;!-- Post Content --&gt;
+&lt;p&gt;Controllers (yes multiple) keep track of all the activities and monitors each of them to respond accordingly in case of change of behavior. All the controllers run inside &lt;code class=&quot;language-text&quot;&gt;kube-control-manager&lt;/code&gt; which act as reflexes in the cluster. &lt;/p&gt;
+&lt;h3&gt;Replication Controller&lt;/h3&gt;
+&lt;p&gt;To prevent users from loosing connection to a running pod that crashes. So either by creating a replicate of existing POD or by redeploying the crashed POD. This nature therefore helps in addressing High Availability, Load Balancing and Scaling.&lt;/p&gt;
+&lt;p&gt;Replication Controller is one of the Master node components that spans across all nodes in the cluster.&lt;/p&gt;
+&lt;h3&gt;Definition file&lt;/h3&gt;
+&lt;p&gt;Start with the base definition keywords: &lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;code class=&quot;language-text&quot;&gt;apiVersion&lt;/code&gt;&lt;/th&gt;
+&lt;th&gt;&lt;code class=&quot;language-text&quot;&gt;kind&lt;/code&gt;&lt;/th&gt;
+&lt;th&gt;&lt;code class=&quot;language-text&quot;&gt;metadata&lt;/code&gt;&lt;/th&gt;
+&lt;th&gt;&lt;code class=&quot;language-text&quot;&gt;spec&lt;/code&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;v1&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;ReplicationController&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code class=&quot;language-text&quot;&gt;name&lt;/code&gt;&lt;br/&gt;&lt;code class=&quot;language-text&quot;&gt;labels&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code class=&quot;language-text&quot;&gt;template&lt;/code&gt; → pod-definition &lt;br/&gt; &lt;code class=&quot;language-text&quot;&gt;replicas&lt;/code&gt; → integer&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;Note&lt;/strong&gt; The pods created using ReplicationController definition is from its name &lt;strong&gt;&lt;em&gt;not from&lt;/em&gt;&lt;/strong&gt; the metadata under spec → template → metadata&lt;/p&gt;
+&lt;h3&gt;Replica Set&lt;/h3&gt;
+&lt;p&gt;Replica Set is a new recommended way of working as it originates from Replication Controller. &lt;/p&gt;
+&lt;p&gt;Additional feature of a ReplicaSet is managing Pods those are not part the current replica set. Use the &lt;code class=&quot;language-text&quot;&gt;selector&lt;/code&gt; tag in the definition file under &lt;code class=&quot;language-text&quot;&gt;spec&lt;/code&gt; section to add other pods. &lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;code class=&quot;language-text&quot;&gt;apiVersion&lt;/code&gt;&lt;/th&gt;
+&lt;th&gt;&lt;code class=&quot;language-text&quot;&gt;kind&lt;/code&gt;&lt;/th&gt;
+&lt;th&gt;&lt;code class=&quot;language-text&quot;&gt;metadata&lt;/code&gt;&lt;/th&gt;
+&lt;th&gt;&lt;code class=&quot;language-text&quot;&gt;spec&lt;/code&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;apps/v1&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;ReplicaSet&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code class=&quot;language-text&quot;&gt;name&lt;/code&gt;&lt;br/&gt;&lt;code class=&quot;language-text&quot;&gt;labels&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code class=&quot;language-text&quot;&gt;template&lt;/code&gt; → pod-definition &lt;br/&gt; &lt;code class=&quot;language-text&quot;&gt;replicas&lt;/code&gt; → integer &lt;br/&gt; &lt;code class=&quot;language-text&quot;&gt;selector&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2&gt;Learning with example&lt;/h2&gt;
+&lt;p&gt;Consider, within a K8S cluster there are already PODs, labeled &lt;code class=&quot;language-text&quot;&gt;login-api&lt;/code&gt;, running even before there exists a ReplicaSet. Now when a replicaSet, named &lt;code class=&quot;language-text&quot;&gt;authentication-rs&lt;/code&gt;, is created with template corresponding to same container image, as the running POD but labeled &lt;code class=&quot;language-text&quot;&gt;authentication-api&lt;/code&gt; on the selector.&lt;/p&gt;
+&lt;h3&gt;POD from ReplicaSet Perspective&lt;/h3&gt;
+&lt;p&gt;The definition file for the ReplicaSet contains template of POD and selector fields. Based on this information, a replicaSet instance keep track of pods. In above scenario by default, the &lt;code class=&quot;language-text&quot;&gt;authentication-rs&lt;/code&gt; keeps track of &lt;em&gt;only&lt;/em&gt; the PODs labeled  &lt;code class=&quot;language-text&quot;&gt;authentication-api&lt;/code&gt; to make sure desired number of these PODs are running but not the PODs labeled &lt;code class=&quot;language-text&quot;&gt;login-api&lt;/code&gt;. By using the command &lt;code class=&quot;language-text&quot;&gt;kubectl describe replicaset authentication-rs&lt;/code&gt;, the Events sections will list all the PODs which are being tracked by the replicaSet. All the pods created by the replicaSet adds a metadata label &lt;code class=&quot;language-text&quot;&gt;ownerreferences&lt;/code&gt;.&lt;/p&gt;
+&lt;h3&gt;ReplicaSet from POD perspective&lt;/h3&gt;
+&lt;p&gt;The pods deployed from the replicaSet can be identified by the names, as the start with the replicaSet name. In the above scenario, the pods names turnup something similar to &lt;code class=&quot;language-text&quot;&gt;authentication-rs-ab1c2d&lt;/code&gt;. Another option to find the details are by using the command &lt;code class=&quot;language-text&quot;&gt;kubectl describe pod authentication-rs-ab1c2d&lt;/code&gt;. The Events sections will list all the POD details, one of which will be &lt;code class=&quot;language-text&quot;&gt;Controlled By:  ReplicaSet/authentication-rs&lt;/code&gt;. Also notice that the metadata section of the POD contains &lt;code class=&quot;language-text&quot;&gt;ownerReferences&lt;/code&gt; with the replicaSet name &lt;code class=&quot;language-text&quot;&gt;authentication-rs&lt;/code&gt;. &lt;/p&gt;
+&lt;h3&gt;Definition Files&lt;/h3&gt;
+&lt;p&gt;Following below are sample Definition files to create a ReplicationController and a ReplicaSet&lt;/p&gt;
+&lt;h4&gt;ReplicationController Definition File&lt;/h4&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;# replicationController-definition.yaml 
+
+apiVersion: v1
+kind: ReplicationController
+metadata:
+    name: myapp-rc
+    labels:
+        app: myapp
+        type: frontend
+spec:
+    template:
+        # Pod definition
+        metadata:
+            name: sample-app
+            labels:
+                app: api
+                type: frontend
+        spec:
+            containers:
+                - name: nginx-container
+                  image: nginx
+
+    replicas: 5&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h4&gt;ReplicaSet Definition File&lt;/h4&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;# replicaSet-definition.yaml 
+
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+    name: myapp-rc
+    labels:
+        app: myapp
+        type: frontend
+spec:
+    template:
+        # Pod definition
+        metadata:
+            name: sample-app
+            labels:
+                app: api
+                type: frontend
+        spec:
+            containers:
+                - name: nginx-container
+                  image: nginx
+
+    replicas: 5
+    selector: 
+        matchLabels:
+            type: frontend&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h3&gt;Commands&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Create without yaml&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;kubectl create replicaSet authentication-rs --image nginx --replicas=3&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;Get details of ReplicaSet&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;kubectl describe replicaSet authentication-rs&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;To fix existing erroneous ReplicaSet&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;kubectl edit replicaset &amp;lt;name-of-replicaset&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;Scale up or down pods in the replica sets:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;## Option 1
+kubectl scale --replicas &amp;lt;number&gt; rs/&amp;lt;name-of-replicaset&gt;
+
+## Option 2
+kubectl scale replicaset --replicas=&amp;lt;number&gt; &amp;lt;name-of-replicaset&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h3&gt;Debugging issue&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;A erroneous ReplicaSet can still create PODs but in error state.
+To fix the issue there are two options:&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Option 1&lt;/em&gt;: Delete the ReplicaSet → Fix the YAML → Apply updated file to create new ReplicaSet&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Option 2&lt;/em&gt;: Using &lt;code class=&quot;language-text&quot;&gt;kubectl edit&lt;/code&gt; fix the YAML → Delete all the PODs which were created erroneously &lt;/li&gt;
+&lt;/ul&gt;</content:encoded></item><item><title><![CDATA[CKAD Preparation - Pods]]></title><description><![CDATA[PODS Pod is a smallest component in the K8S architecture. A container typically has one-one relation with a Pod. For scenarios where…]]></description><link>https://koushik-aravalli.github.io/about-me/CKAD-preparation/2021-04-02-CKAD-Pods/</link><guid isPermaLink="false">https://koushik-aravalli.github.io/about-me/CKAD-preparation/2021-04-02-CKAD-Pods/</guid><pubDate>Fri, 02 Apr 2021 00:00:00 GMT</pubDate><content:encoded>&lt;!-- Post Content --&gt;
+&lt;h3&gt;PODS&lt;/h3&gt;
+&lt;p&gt;Pod is a smallest component in the K8S architecture. A container typically has one-one relation with a Pod. For scenarios where application needs pattern implementation like sidecar or adaptor or even ambassador. &lt;/p&gt;
+&lt;h4&gt;YAML for PODS&lt;/h4&gt;
+&lt;p&gt;K8S YAML has 4 root levels required fields: &lt;code class=&quot;language-text&quot;&gt;apiVersion&lt;/code&gt;, &lt;code class=&quot;language-text&quot;&gt;kind&lt;/code&gt;, &lt;code class=&quot;language-text&quot;&gt;metadata&lt;/code&gt;, &lt;code class=&quot;language-text&quot;&gt;spec&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;apiVersion&lt;/code&gt; : ApiVersion of K8S (v1 → all &lt;code class=&quot;language-text&quot;&gt;1.xx&lt;/code&gt; versions, including alpha and beta)&lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;kind&lt;/code&gt; : Type of object (Pods, Service, ReplicaSet, Deployment)&lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;metadata&lt;/code&gt; : A Dictionary of the object like &lt;code class=&quot;language-text&quot;&gt;name&lt;/code&gt; (string value), &lt;code class=&quot;language-text&quot;&gt;labels&lt;/code&gt; (Dictionary value, any non k8s specific unlike the root level metadata)&lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;spec&lt;/code&gt;: Depending on type of object, the information changes. This is also a dictionary.&lt;/p&gt;
+&lt;h5&gt;POD definition - vanilla flavour&lt;/h5&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;# nginx-pod-definition.yaml
+
+apiVersion: v1
+
+kind: Pod
+
+metadata:
+    name: sample-app
+    labels:
+        app: api
+        type: frontend
+
+spec:
+    containers:
+        - name: nginx-container
+          image: nginx&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h5&gt;POD definition file with Arguments&lt;/h5&gt;
+&lt;p&gt;Most of the container images built have docker file with &lt;code class=&quot;language-text&quot;&gt;ENTRYPOINT&lt;/code&gt; (which command to execute on startup of the container) and &lt;code class=&quot;language-text&quot;&gt;CMD&lt;/code&gt; (what are the input arguments to be passed). When creating a POD definition to deploy such a container and overwrite the default values defined in the &lt;code class=&quot;language-text&quot;&gt;dockerfile&lt;/code&gt;, include under the containers section &lt;code class=&quot;language-text&quot;&gt;command&lt;/code&gt; and &lt;code class=&quot;language-text&quot;&gt;args&lt;/code&gt;. &lt;strong&gt;&lt;em&gt;Note that &lt;code class=&quot;language-text&quot;&gt;args&lt;/code&gt; accepts array of values.&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;# tomcat-pod-definition.yaml
+
+apiVersion: v1
+
+kind: Pod
+
+metadata:
+    name: sample-app-2
+    labels:
+        app: api-2
+        type: frontend
+
+spec:
+    containers:
+        - name: tomcat-container
+          image: tomcat
+          command: &apos;/usr/local/tomcat/entrypoint.sh&apos;
+          args: [&quot;8080&quot;]&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h5&gt;Create POD in K8S&lt;/h5&gt;
+&lt;p&gt;To create the container with the above file use:&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;kubectl create -f ./nginx-pod-definition.yaml&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h5&gt;Security on POD&lt;/h5&gt;
+&lt;p&gt;K8S provides capabilities to add security at either POD level or at the container level. By adding SecurityContext Object with runAsUser along with required capabilities is a way forward to provide fine grained access to the users. Following is a sample POD definition:&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;# nginx-pod-definition.yaml
+
+apiVersion: v1
+
+kind: Pod
+
+metadata:
+    name: sample-app
+    labels:
+        app: api
+        type: frontend
+
+spec:
+    # POD level security
+    # Add user who has ID 1000
+    securityContext:
+        runAsUser: 2000
+
+    containers:
+        - name: nginx-container
+          image: nginx
+          # Container level security
+          # Add user who has ID 2000, and restricted capabilties to only manage system date
+          securityContext:
+            runAsUser: 2000
+            capablities:
+                add: [&quot;SYS_DATE&quot;]&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h4&gt;Debugging&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;If the YAML is malformed, kubectl errors outs during execution. &lt;/li&gt;
+&lt;li&gt;If the &lt;code class=&quot;language-text&quot;&gt;image&lt;/code&gt; provided in the definition &lt;code class=&quot;language-text&quot;&gt;spec&lt;/code&gt; is not found, &lt;code class=&quot;language-text&quot;&gt;kubectl get pods&lt;/code&gt; still returns the described pod but with state &lt;code class=&quot;language-text&quot;&gt;Imagepullbackoff&lt;/code&gt;. &lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;To see the details of a pod use the following&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;# get all details
+kubectl describe pod &amp;lt;podname&gt; | grep
+
+# get information without full details
+kubectl get pods &amp;lt;podname&gt; -o wide&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;Events: list of actions performed in sequence&lt;/li&gt;
+&lt;li&gt;Node&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;To extract pod definition yaml for an existing pod:&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;kubectl get pod &amp;lt;pod-name&gt; -o yaml &gt; &amp;lt;pod-definition-file-name.yaml&gt;
+
+kubectl get pod &amp;lt;pod-name&gt; -o wide # all details of pod&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;To apply changes to a running pod, &lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;# get current running config and once updated and save it is directly applied
+
+kubectl edit pod &amp;lt;pod-name&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;To search for the PODs based on their labels:&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;kubectl get pod -l &amp;lt;name-of-lable&gt;=&amp;lt;value-of-label&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;To dive into the running pod, similar to Docker&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;kubectl exec -it &amp;lt;name-of-pod&gt; -- &amp;lt;command&gt;
+kubectl exec -it ubuntu-sleeper -- date -s &apos;Apr 27 2021, 07:00:00&apos;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;Gottcha&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;Want to overwrite the container &lt;code class=&quot;language-text&quot;&gt;entrypoint&lt;/code&gt; on running container in the POD, no cannot. To do so, delete the POD and recreate it. &lt;strong&gt;Use the deployment YAML which automatically takes care if it&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;</content:encoded></item><item><title><![CDATA[CKAD Preparation - Development Environment]]></title><description><![CDATA[So it is time to jump into Kubernetes Application Development. Target is set, hope to build a series of posts as I prepare for Kubernetes…]]></description><link>https://koushik-aravalli.github.io/about-me/CKAD-preparation/</link><guid isPermaLink="false">https://koushik-aravalli.github.io/about-me/CKAD-preparation/</guid><pubDate>Thu, 01 Apr 2021 00:00:00 GMT</pubDate><content:encoded>&lt;!-- Post Content --&gt;
+&lt;p&gt;So it is time to jump into Kubernetes Application Development. Target is set, hope to build a series of posts as I prepare for Kubernetes Application Developer Certification.&lt;/p&gt;
+&lt;h3&gt;Learning guide pinpoint&lt;/h3&gt;
+&lt;p&gt;With few recommendation from friends, colleagues, and references gather following material:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Udemy course by &lt;em&gt;&lt;a href=&quot;https://www.udemy.com/course/certified-kubernetes-application-developer/&quot;&gt;KodeKloud&lt;/a&gt;&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;&lt;a href=&quot;https://www.youtube.com/channel/UCdngmbVKX1Tgre699-XLlUA&quot;&gt;Tech With Nana&lt;/a&gt;&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;&lt;a href=&quot;https://www.katacoda.com/courses/kubernetes&quot;&gt;Katacoda&lt;/a&gt;&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;Setup environment to install Minikube&lt;/h4&gt;
+&lt;p&gt; To get started, I want to make sure my work is saves outside my laptop. So, I already have Azure Subscription, I am going to make use of it.&lt;/p&gt;
+&lt;h4&gt;Generate keys to access virtual machine&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;To access the Ubuntu sever from my windows machine, have windows terminal installed to make use of &lt;em&gt;&lt;a href=&quot;https://docs.microsoft.com/en-us/windows/terminal/tutorials/ssh&quot;&gt;SSH&lt;/a&gt;&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;Create keys (optional), open windows terminal at user level using &lt;code class=&quot;language-text&quot;&gt;ssh-keygen&lt;/code&gt;, generate public and private keys. &lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt; &lt;img src=&quot;../../assets2021-04-01-sshkeygen.jpg&quot;&gt;&lt;/p&gt;
+&lt;h4&gt;Create Ubuntu VM&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Spin up Canonical.UbuntuServer in Azure&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Make sure 3 series is selected size, because Virtualization is supported. Select D3 series: &lt;code class=&quot;language-text&quot;&gt;Standard D2s v3 (2 vcpus, 8 GiB memory)&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Make sure to have &lt;code class=&quot;language-text&quot;&gt;ssh&lt;/code&gt; port open, so that the VM can be access&lt;/li&gt;
+&lt;li&gt;Have auto shutdown to minimize costs&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt; Here is the &lt;a href=&quot;https://github.com/koushik-aravalli/development/blob/master/CKAD/Environment/azure-ubuntu-template.json&quot;&gt;deployment template&lt;/a&gt;&lt;/p&gt;
+&lt;h4&gt;Connect to VM&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;Now the VM is ready, to connect from local machine, in this case windows machine, the private key is saved to &lt;code class=&quot;language-text&quot;&gt;.ssh\id_rsa\&lt;/code&gt; folder. It could as well be &lt;code class=&quot;language-text&quot;&gt;.ssh\azureadmin\&lt;/code&gt; as in my case I have work with multiple keys.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;C:\Users\Koushik\.ssh\azureadmin&gt;ssh -i id_rsa azureuser@&amp;lt;virtual machine pip&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt; &lt;img src=&quot;../../assets2021-04-01-connect-to-vm.jpg&quot;&gt;&lt;/p&gt;
+&lt;h4&gt;Enable Virtualization on Azure VM&lt;/h4&gt;
+&lt;p&gt;&lt;em&gt;Why: Minikube, that we will use for development, can run with and without virtualMachine driver. In this case we have a Azure VM, and we let minkikube use this as a host. And let minikube create virtualMachine inside this AzureVM.&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;During VM creation, &lt;code class=&quot;language-text&quot;&gt;Standard D2s v3 (2 vcpus, 8 GiB memory)&lt;/code&gt; Size is selected. Check virtualization on the server using commands&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;lscpu | grep -i virtual&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Output:&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;Virtualization:      VT-x
+Virtualization type: full&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;Install Hypervisor&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Install VirtualBox within the VM&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;sudo apt install virtualbox virtualbox-ext-pack&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;Install Minikube&lt;/h4&gt;
+&lt;p&gt;Follow the steps below to install &lt;code class=&quot;language-text&quot;&gt;minikube&lt;/code&gt; and &lt;code class=&quot;language-text&quot;&gt;kubectl&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;## Download binaries
+ curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+
+## Copy to local bin
+sudo cp minikube-linux-amd64 /usr/local/bin/minikube
+
+## Set execution permissions to minikube
+sudo chmod 755 /usr/local/bin/minikube
+
+## Check Minikube 
+minikube version&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h4&gt;Check and Install kubectl&lt;/h4&gt;
+&lt;p&gt;Kubectl is already part of the Minikube but incase it is not&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;## Download binaries
+curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
+
+## Make it executable
+chmod +x ./kubectl
+
+## Copy to local bin
+sudo mv ./kubectl /usr/local/bin/kubectl
+
+## Check kubectl
+kubectl version&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h3&gt;Start Minikube&lt;/h3&gt;
+&lt;p&gt;Run the command to start minikube&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;minikube start&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Output:&lt;/p&gt;
+&lt;p&gt; &lt;img src=&quot;../../assets2021-04-01-minikubestart.jpg&quot;&gt;&lt;/p&gt;
+&lt;h4&gt;Shutdown or Restart VM - Handle Minikube&lt;/h4&gt;
+&lt;p&gt;As the AzureVM is stopped and restarted after deallocation, in the backend the host at the Azure datacenter resets the &lt;em&gt;Virtualization&lt;/em&gt; settings. Therefore command to start the minikube will result in &lt;strong&gt;Exiting due to PROVIDER&lt;em&gt;VIRTUALBOX&lt;/em&gt;NOT_RUNNING: signal: killed&lt;/strong&gt;. So rerun the virtualization command as &lt;a href=&quot;#Enable-Virtualization-on-Azure-VM&quot;&gt;above&lt;/a&gt;&lt;/p&gt;
+&lt;h3&gt;Test preparation references&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://medium.com/bb-tutorials-and-thoughts/practice-enough-with-these-questions-for-the-ckad-exam-2f42d1228552&quot;&gt;Mock questions&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content:encoded></item><item><title><![CDATA[Using AzureDevOps Agent's OAuth to create branch]]></title><description><![CDATA[What is the reason behind Working more AzureDevOps, artifacts are generated during the build process and release follows based on the…]]></description><link>https://koushik-aravalli.github.io/about-me/AzureDevOps-Agent-OAuth-CreateBranch/</link><guid isPermaLink="false">https://koushik-aravalli.github.io/about-me/AzureDevOps-Agent-OAuth-CreateBranch/</guid><pubDate>Sun, 14 Mar 2021 00:00:00 GMT</pubDate><content:encoded>&lt;!-- Post Content --&gt;
+&lt;h2&gt;What is the reason behind&lt;/h2&gt;
+&lt;p&gt;Working more AzureDevOps, artifacts are generated during the build process and release follows based on the artifacts, basic CI/CD. &lt;/p&gt;
+&lt;p&gt;At times, extensions require an OAuth to be enabled on the agent to perform actions within Azure DevOps e.g., creating or updating work items on a task board, creating a new repository or creating new branch, creating or completing a pull request. So two questions, under who’s context is this OAuth generated, and how to provide fine grained access to create branch and pr. &lt;/p&gt;
+&lt;p&gt; &lt;img src=&quot;../../assets2021-03-14-OAuth-token-security.jpg&quot;&gt;&lt;/p&gt;
+&lt;h3&gt;To answer the first question, &lt;em&gt;under who’s context is this OAuth generated&gt;&lt;/em&gt;:&lt;/h3&gt;
+&lt;p&gt;First lets understand permissions within Azure DevOp. An Azure DevOps Organization has built-in default accounts and groups that are created and managed by AzureDevOps Service. These are at both Collection (Organization) level and Project level. &lt;em&gt;(Side note, Collection comes from the Team Foundation Service)&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;For additional information &lt;a href=&quot;https://docs.microsoft.com/en-us/azure/devops/organizations/security/permissions?view=azure-devops&amp;#x26;tabs=preview-page#service-accounts&quot;&gt;Refer&lt;/a&gt;&lt;/em&gt; to Azure DevOps documentation. &lt;/p&gt;
+&lt;p&gt;The closest lead &lt;code class=&quot;language-text&quot;&gt;Agent Pool Service&lt;/code&gt; who belong to the collections &lt;code class=&quot;language-text&quot;&gt;Security Service Group&lt;/code&gt;.  Notice that within this security group there are Project level &lt;code class=&quot;language-text&quot;&gt;&amp;lt;projectname&gt; Build Service&lt;/code&gt; - one for each project and one &lt;code class=&quot;language-text&quot;&gt;Project Collection Build Service (&amp;lt;organizationname&gt;)&lt;/code&gt;. One of these two will be a used by the agents. Now that is only a partial answer because which service account is it Collection or Project? And next question is fine grained controls that AzureDevOps provides for each service account &lt;/p&gt;
+&lt;p&gt; &lt;img src=&quot;../../assets2021-03-14-agentpoolservice.jpg&quot;&gt;&lt;/p&gt;
+&lt;p&gt;The default behavior is always from the Collection level, so the &lt;code class=&quot;language-text&quot;&gt;Project Collection Build Service (&amp;lt;organizationname&gt;)&lt;/code&gt; will be used by the Agent for OAuth generation. &lt;/p&gt;
+&lt;p&gt;In some organizations, where a central IT team owns the Azure DevOps Organization and Projects are created per DevOps teams,  collection level access is restricted. It can be verified by checking out the Azure DevOps Organization Settings.&lt;/p&gt;
+&lt;p&gt; &lt;img src=&quot;../../assets2021-03-14-Organization-Settings.jpg&quot;&gt;&lt;/p&gt;
+&lt;p&gt;This setting can also be managed from the Project level, if not set at Organization level. &lt;/p&gt;
+&lt;p&gt; &lt;img src=&quot;../../assets2021-03-14-Project-Settings.jpg&quot;&gt;&lt;/p&gt;
+&lt;p&gt;By limiting the job authorization scope, all the pipelines within the Projects consider &lt;code class=&quot;language-text&quot;&gt;&amp;lt;projectname&gt; Build Service&lt;/code&gt; instead of Collection level Build Service.&lt;/p&gt;
+&lt;h3&gt;To answer the second question, &lt;em&gt;how to provide fine grained access to create branch and pull request&lt;/em&gt;:&lt;/h3&gt;
+&lt;p&gt;Fine grained controls for the service account are set at Project level by selecting Project Settings → Repos → Repositories. Select &lt;code class=&quot;language-text&quot;&gt;Security&lt;/code&gt; on &lt;code class=&quot;language-text&quot;&gt;All Repositories&lt;/code&gt; or each repository.&lt;/p&gt;
+&lt;p&gt; &lt;img src=&quot;../../assets2021-03-14-Secuirty-BuildService-Allow.jpg&quot;&gt;&lt;/p&gt;
+&lt;p&gt;That is it .. now create a script which can create a new branch and does a Pull Request. &lt;/p&gt;</content:encoded></item><item><title><![CDATA[Azure Network Solution as a Markdown]]></title><description><![CDATA[While managing large-scale implementations on cloud platforms, Network Solutions deployments are managed by the application teams themselves…]]></description><link>https://koushik-aravalli.github.io/about-me/AzureVnet-as-markdown/</link><guid isPermaLink="false">https://koushik-aravalli.github.io/about-me/AzureVnet-as-markdown/</guid><pubDate>Wed, 17 Feb 2021 00:00:00 GMT</pubDate><content:encoded>&lt;!-- Post Content --&gt;
+&lt;p&gt;While managing large-scale implementations on cloud platforms, Network Solutions deployments are managed by the application teams themselves or a central team. Either way, core resources within a Network solution are Virtual Network with Subnets, Network Security Groups, Route Tables and VirtualNetwork Hubs. To have an overview of the deployed Network Solutions, user interface or control plane (API) provided by the service provider can help us out. &lt;strong&gt;Now how about documenting the Network solution?&lt;/strong&gt; This post describes how to generate documentation of a Network Solution. &lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;&lt;a href=&quot;http://armviz.io/designer&quot;&gt;ARMVIZ&lt;/a&gt;&lt;/em&gt;&lt;/strong&gt; is an awesome tool to have a graphical view generated based on the exported arm template. To generate details on top of the visualization, what if there is a &lt;code class=&quot;language-text&quot;&gt;markdown&lt;/code&gt; file generated that is attached to the documentation. &lt;strong&gt;&lt;em&gt;&lt;a href=&quot;https://nugetmusthaves.com/Tag/markdown&quot;&gt;Here&lt;/a&gt;&lt;/em&gt;&lt;/strong&gt; we can find top NuGet packages to embed within code to generate one. Now, since I am using C# and PowerShell to work with Azure Infrastructure provisioning, in this post I will go through how using &lt;strong&gt;&lt;em&gt;&lt;a href=&quot;https://github.com/BernieWhite/PSDocs&quot;&gt;PSDOCS&lt;/a&gt;&lt;/em&gt;&lt;/strong&gt; and how I achieved it. &lt;/p&gt;
+&lt;h3&gt;Where to start&lt;/h3&gt;
+&lt;p&gt;In Azure Networking Architecture, &lt;strong&gt;&lt;em&gt;&lt;a href=&quot;https://docs.microsoft.com/en-us/azure/architecture/reference-architectures/hybrid-networking/hub-spoke?tabs=cli&quot;&gt;Hub-Spoke&lt;/a&gt;&lt;/em&gt;&lt;/strong&gt; is vastly adopted. Follow &lt;strong&gt;&lt;em&gt;&lt;a href=&quot;https://docs.microsoft.com/en-us/azure/architecture/reference-architectures/hybrid-networking/hub-spoke?tabs=cli&quot;&gt;basic deployment instructions&lt;/a&gt;&lt;/em&gt;&lt;/strong&gt; of the architecture. &lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;../../assets2021-02-17-Azure-Hub-Spoke-Network-Solution.jpg&quot;&gt;&lt;/p&gt;
+&lt;h3&gt;What data is required&lt;/h3&gt;
+&lt;p&gt;All the data required to fill in the markdown needs to be populated in a hash table. Below are the details for a VirtualNetwork in general, it could be a Hub or Spoke.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Install PSDOCs PowerShell module&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;$null = Install-PackageProvider -Name NuGet -Force -Scope CurrentUser
+Install-Module -Name PSDocs -RequiredVersion 0.6.3 -Scope CurrentUser -Force
+Import-Module PSDocs&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Get VirtualNetwork Information&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;$VirtualNetwork = Get-AzVirtualNetwork -Name $VirtualNetworkName
+$subscription = Get-AzSubscription -SubscriptionId $VirtualNetwork.Id.Split(&apos;/&apos;)[2]&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Derive Subnets Information from the VirtualNetwork&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;[PSCustomObject]@{
+    subnetName    = $subnet.name
+    addressSpace  = $subnet.AddressPrefix
+    LoadBalancer  = $false
+    DisableJITPIM = $false
+}&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Get NSG Information linked to each Subnet and save all security rules into an ArrayList&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;$nsg = Get-AzNetworkSecurityGroup -Name ($subnet.NetworksecurityGroup.Id.Split(&apos;/&apos;)[-1])
+
+Foreach ($securityRule in $nsg.SecurityRules) {
+    $nsgRule = [PSCustomObject]@{
+        Name           = $securityRule.Name
+        Direction      = $securityRule.Direction
+        Priority       = $securityRule.Priority
+        Access         = $securityRule.Access
+        &apos;From address&apos; = $securityRule.SourceAddressPrefix
+        &apos;To address&apos;   = $securityRule.DestinationAddressPrefix
+        &apos;From port&apos;    = $securityRule.SourcePortRange
+        &apos;To port&apos;      = $securityRule.DestinationPortRange
+    }
+    $subnetObj.Nsg.SecurityRules.Add($nsgRule) | out-null
+}&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;If there are custom DNS Settings also gather that information. Also list all Private DNS Zones linked with the Virtual Network.&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;$dns = @{
+    &quot;Name&quot; = $dnsOption
+}&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;$privateDns = Get-AzPrivateDnsZone
+$vnetLinkedPrivateDns = [System.Collections.ArrayList]@()
+foreach ($pdns in $privateDns) {
+    $dnsVnetlink = Get-AzPrivateDnsVirtualNetworkLink -ResourceGroupName $pdns.ResourceGroupName -ZoneName $pdns.Name
+    If($dnsVnetlink.VirtualNetworkId -eq $VirtualNetwork.Id){
+        $vnetLinkedPrivateDns.Add($pdns.ResourceId)
+    }
+}&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3&gt;How to populate&lt;/h3&gt;
+&lt;p&gt;PSDocs works by translating &lt;code class=&quot;language-text&quot;&gt;*.doc.ps1&lt;/code&gt; files into a markdown file. To generate a Markdown run the command&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;Invoke-PSDocument -Path &amp;lt;location of *.doc.ps1 file&gt; -InputObject &amp;lt;data as Key-value pair or customObject&gt; -OutputPath &amp;lt;location to save the generated markdown file&gt; -Option &amp;lt;if needed additonal settings to support generation of markdown&gt;;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;For the above context of Hub-Spoke, a &lt;code class=&quot;language-text&quot;&gt;BaseTemplate.doc.ps1&lt;/code&gt; is created with sections &lt;em&gt;General information&lt;/em&gt; and &lt;em&gt;Virtual Network&lt;/em&gt;. &lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;../../assets2021-02-17-BaseTemplate.jpg&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;General information&lt;/em&gt; contains Subscription, ResourceGroup and other information to identify ownership of the VirtualNetwork.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;VirtualNetwork&lt;/em&gt; contains multiple sections e.g., &lt;code class=&quot;language-text&quot;&gt;AddressSpace&lt;/code&gt;, &lt;code class=&quot;language-text&quot;&gt;DNS&lt;/code&gt;, &lt;code class=&quot;language-text&quot;&gt;Subnets&lt;/code&gt;, &lt;code class=&quot;language-text&quot;&gt;RouteTable&lt;/code&gt;, &lt;code class=&quot;language-text&quot;&gt;NSGs&lt;/code&gt;, &lt;code class=&quot;language-text&quot;&gt;Peering&lt;/code&gt;. Either all data can be added in the same file or each section can be divided in a separate template. &lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;../../assets2021-02-17-BaseTemplate-VNET.jpg&quot;&gt;&lt;/p&gt;
+&lt;p&gt;Upon generation of each subsection, all are merged in the BaseTemplate generated markdown. &lt;/p&gt;
+&lt;p&gt;For example, using RouteTable data markdown is generated. The content of the markdown is copied back to the input object that will be used to generate VirtualNetwork section.&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;$READMERouteTableTemplateName = &apos;RouteTable.doc.ps1&apos;
+Invoke-PSDocument -Path (&apos;{0}\SubTemplates\{1}&apos; -f $TemplatePath, $READMERouteTableTemplateName) -InputObject $readmeObject -OutputPath $OutputPath -Option $options;
+
+# Add content of the generated file as string. 
+$readmeObject.RouteTableSection = (Get-Content -Path &quot;$OutputPath/README.md&quot; -Encoding UTF8 -Raw).Replace(&apos;# &apos;, &apos;## &apos;)&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h2&gt;Sample files&lt;/h2&gt;
+&lt;p&gt;That is it, now combining all the steps a Network Solution for a HUB or a SPOKE virtual network can be generated describing every detail in a single page.&lt;/p&gt;
+&lt;p&gt;Here is a sample for the &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;&lt;em&gt;&lt;a href=&quot;https://github.com/koushik-aravalli/development/blob/master/LetsTryDocumenting/Hub/README.md&quot;&gt;HUB VNET&lt;/a&gt;&lt;/em&gt;&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;em&gt;&lt;a href=&quot;https://github.com/koushik-aravalli/development/blob/master/LetsTryDocumenting/SpokeOne/README.md&quot;&gt;SPOKE VNET&lt;/a&gt;&lt;/em&gt;&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;Where to download source code&lt;/h2&gt;
+&lt;p&gt;All scripts can be found &lt;strong&gt;&lt;em&gt;&lt;a href=&quot;https://github.com/koushik-aravalli/development/tree/master/LetsTryDocumenting&quot;&gt;here&lt;/a&gt;&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;</content:encoded></item><item><title><![CDATA[git commands helper]]></title><description><![CDATA[git Scenarios master and release, only certain files/folder Customer has multiple leading branches, yes not good practice but still they…]]></description><link>https://koushik-aravalli.github.io/about-me/Git-helper/</link><guid isPermaLink="false">https://koushik-aravalli.github.io/about-me/Git-helper/</guid><pubDate>Mon, 01 Feb 2021 00:00:00 GMT</pubDate><content:encoded>&lt;!-- Post Content --&gt;
+&lt;br/&gt;
+&lt;h2&gt;git Scenarios&lt;/h2&gt;
+&lt;h3&gt;master and release, only certain files/folder&lt;/h3&gt;
+&lt;p&gt;Customer has multiple leading branches, yes not good practice but still they survive. &lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;master&lt;/code&gt; branch has all kinds of files, but &lt;code class=&quot;language-text&quot;&gt;release&lt;/code&gt; requires only selected folder. Development is all done from master derived branches. Therefore reviews and merges are focused under master. &lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;git cherry-pick&lt;/code&gt; in action, perfect and invaluable to help isolate specific commits. &lt;/p&gt;
+&lt;p&gt;steps to do:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Create new branch from &lt;code class=&quot;language-text&quot;&gt;master&lt;/code&gt; and develop all changes. Follow good practices to do commits.&lt;/li&gt;
+&lt;li&gt;Create Pull Request and merge changes to &lt;code class=&quot;language-text&quot;&gt;master&lt;/code&gt;. Locally, get latest &lt;code class=&quot;language-text&quot;&gt;master&lt;/code&gt; now including the merged changes. &lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Using &lt;code class=&quot;language-text&quot;&gt;git log&lt;/code&gt; get the latest log. Find the merge done in second step. Below is a sample log message from the merge. Notice the commit which will be used next.&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;commit cf23e3333c222ea40adbb2d2da111b05a00f2f4e (HEAD -&gt; master, DevelopmentRepo/master)
+Merge: 07dc8373c bca29fc4a
+Author: Koushik Aravalli &amp;lt;koushik.aravalli@.com&gt;
+Date:   Thu May 27 13:11:13 2021 +0000
+
+Merged PR 62636: My pullrequest merge message
+
+My commit messages
+
+Related work items: #224345&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;Create new branch from &lt;code class=&quot;language-text&quot;&gt;release&lt;/code&gt; and checkout locally the new branch. &lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Now lets cherry pick only this merge that has changes to the folder which is now in master branch. Assuming latest merge is still the same, run the following command. &lt;br/&gt;&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;git cherry-pick -m 1 &amp;lt;merge-commit-id&gt;
+
+## git cherry-pick -m 1 cf23e3333c222ea40adbb2d2da111b05a00f2f4e&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;That is it. The new branch now contains only the merge changes, which can be handled the same way to do a Pullrequest into the &lt;code class=&quot;language-text&quot;&gt;release&lt;/code&gt; branch.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Azure App Service - VNET integration - Locks Subnet]]></title><description><![CDATA[Problem Statement When working with Azure App Service and securing the traffic route into and out from the deployed app service, VNET…]]></description><link>https://koushik-aravalli.github.io/about-me/AzureAppService-VNET-Integration-Failure/</link><guid isPermaLink="false">https://koushik-aravalli.github.io/about-me/AzureAppService-VNET-Integration-Failure/</guid><pubDate>Thu, 17 Dec 2020 00:00:00 GMT</pubDate><content:encoded>&lt;!-- Post Content --&gt;
+&lt;br/&gt;
+&lt;h2&gt;Problem Statement&lt;/h2&gt;
+&lt;p&gt;When working with Azure App Service and securing the traffic route into and out from the deployed app service, &lt;strong&gt;&lt;a href=&quot;https://docs.microsoft.com/en-us/azure/app-service/web-sites-integrate-with-vnet&quot;&gt;VNET integration feature&lt;/a&gt;&lt;/strong&gt; is at our rescue. Powerful feature  which enables organizations to create UDR (User Defined Routes) to route traffic into Azure Firewall or Virtual Appliance. Deployment of the feature is smooth and easy, but when the App Service is remove (undeployed) is requested Azure Resource Manager also tends to perform delete action on the Subnet to which the App Service is integrated with, resulting in the following error&lt;/p&gt;
+&lt;p&gt; &lt;img src=&quot;../../assets2020-07-03-AzAppService-Subnet-SAL-Error.jpg&quot;&gt;&lt;/p&gt;
+&lt;br/&gt;
+&lt;h2&gt;Cause&lt;/h2&gt;
+&lt;p&gt;As soon as AppService is deployed with VNEt integrated, there are two action that occur in the background. &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;&lt;a href=&quot;https://docs.microsoft.com/en-us/azure/virtual-network/subnet-delegation-overview&quot;&gt;Subnet Delegation&lt;/a&gt;&lt;/strong&gt;, which enforces a Subnet to be dedicated to host resource of a specific type, here it is &lt;code class=&quot;language-text&quot;&gt;Microsoft.Web&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;em&gt;Service Association Link&lt;/em&gt;&lt;/strong&gt;, this locks subnet with the Azure Resource Id. This is cause of the problem because the ResourceId is &lt;strong&gt;&lt;em&gt;not&lt;/em&gt;&lt;/strong&gt; a reference link but a static link.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;Out of experience this is managed by Azure Data Center. Locks on Subnets are recycled on a scheduled period.&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;br/&gt;
+&lt;h2&gt;Solution Approaches&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Typically, providing full access is DevOps team typically restricted in almost all organizations. But if you have Subscription level access and have enough rights to delete Virtual Network, then check Resource locks on the Virtual Network to which the App Service is linked to. Remove the locks and retry undeploy. If that does not work well, proceed with the next step. &lt;/li&gt;
+&lt;li&gt;Get the Azure Resource Id of the Service Association Link that is on the Subnet. Force remove it from the subnet object.
+Since having delete role is a privilege of a non personal account (Service Principal), using Azure DevOps’s Azure PowerShell Task, create inline script with the following&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;Get-AzContext 
+
+Select-AzSubscription -Name $(SubscriptionName)
+
+# Get Virtual Network 
+$vnet = Get-AzVirtualNetwork -Name $(VirtualNetworkName)
+
+# Filter for Subnet associated with AppServicePlan
+$appservice_integrated_subnet = $vnet.Subnets | Where-Object -FilterScript {$_.Name -eq $(Subnetname)}
+
+# Get Service Association Link ResourceID
+$salId = get-azresource -Id $appservice_integrated_subnet.ServiceAssociationLinks.Id
+
+# Check if Azure Resource Exists for the Link
+$linkedAzureResource=get-azresource -Id $appservice_integrated_subnet.ServiceAssociationLinks.Link
+
+# If linked resource is null, remove the Service Association Link
+# Note: This will result in a failure: Some resources failed to be deleted
+# ignore the error, the Link will be removed within 2/3 hours
+Remove-AzResource -ResourceId $salId&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</content:encoded></item><item><title><![CDATA[Azure Devops YAML titbits]]></title><description><![CDATA[When working with YAML pipeline, there are many patterns that are reused across the projects. Here are a few references  Scenario: Trigger…]]></description><link>https://koushik-aravalli.github.io/about-me/AzureDevopsYaml-Titbits/</link><guid isPermaLink="false">https://koushik-aravalli.github.io/about-me/AzureDevopsYaml-Titbits/</guid><pubDate>Wed, 19 Aug 2020 00:00:00 GMT</pubDate><content:encoded>&lt;!-- Post Content --&gt;
+&lt;p&gt;When working with YAML pipeline, there are many patterns that are reused across the projects.&lt;/p&gt;
+&lt;p&gt;Here are a few references &lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Scenario:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;Trigger Release or Test (load/performance/regression) pipelines after successful build&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;# azure-pipelines-primary.yaml
+trigger: none
+steps:
+  - powershell: Write-Host &quot;Triggering pipeline invoked&quot;
+  - task: PublishBuildArtifacts@1
+    displayName: &apos;Drop sample file&apos;
+    inputs:
+      pathToPublish: $(System.DefaultWorkingDirectory)/Get-ResourceGroupTags.ps1
+      artifactName: drop&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;# azure-pipelines-secondary.yaml
+trigger: none
+resources:
+  pipelines:
+  - pipeline: randomname
+    source: primary
+    trigger: 
+      branches:
+      - master
+      - Koushik/*
+steps:
+  - powershell: Write-Host &quot;Triggered secondary pipeline&quot;
+  # - task: DownloadPipelineArtifact@2
+  #   displayName: &apos;artifact: Download artifacts&apos;
+  #   name: download_artifacts
+  #   enabled: true
+  #   inputs:
+  #     source: &apos;specific&apos;
+  #     project: development
+  #     pipeline: randomname
+  #     preferTriggerPipeline: true
+  #     runVersion: latest&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;strong&gt;Scenario:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;Reuse variables across jobs within a pipeline&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;# azure-pipelines-test-variable-crossjobs.yaml
+trigger: none
+jobs:
+  - job: set_variable
+    displayName: Set Variable
+    steps:
+      - task: PowerShell@2
+        displayName: &apos;ps: Set OBJ&apos;
+        name: set_obj
+        enabled: true
+        inputs: 
+          targetType: &apos;inline&apos;
+          script: | 
+            $objInfo = @{
+                &quot;Name&quot; = &quot;var-set-in-set_variable-job&quot;;
+              } | ConvertTo-Json -Compress
+              Write-Host &quot;##vso[task.setvariable variable=objInfo;isOutput=true]$($objInfo)&quot;          
+  - job: get_variable
+    displayName: Get Variable
+    dependsOn: 
+      - set_variable
+    variables:
+      objInfo: $[ dependencies.set_variable.outputs[&apos;set_obj.objInfo&apos;] ]
+    steps:
+      - powershell: |
+          $objInfoDtl = &apos;$(objInfo)&apos; | ConvertFrom-Json
+          Write-Host $objInfoDtl.Name&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;strong&gt;Scenario:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;Dynamically change the buildname of executing pipeline&lt;/em&gt;
+&lt;strong&gt;*Note: Default name of the pipeline will start as date when ‘name’ is not provided *&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;  # azure-pipelines-updaterunningbuildname.yaml
+  name: $(BuildId)_$(SourceBranch)_$(Date:yyyyMMdd)$(Rev:.r)
+  trigger: none
+  jobs:
+    - job: set_variable
+      displayName: Set Variable
+      steps:
+        - task: PowerShell@2
+          displayName: &apos;ps: Set BuildId&apos;
+          name: set_buildId
+          enabled: true
+          inputs: 
+            targetType: &apos;inline&apos;
+            script: | 
+              $buildId_name = &quot;your-awesome-name with somespace and number 100&quot;
+              Write-Host &quot;##vso[task.setvariable variable=newId;isOutput=true]$buildId_name&quot;
+    - job: update_buildName
+      displayName: Set BuildId
+      dependsOn: 
+        - set_variable
+      variables:
+        newBuildId: $[ dependencies.set_variable.outputs[&apos;set_buildId.newId&apos;] ]
+      steps:
+        - powershell: |
+            Write-Host &quot;##vso[build.updatebuildnumber]$(newBuildId)&quot;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;strong&gt;Scenario:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;Upload files during build process as artifact&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;  # azure-pipelines-uploadfile-as-buildartifact.yaml
+  steps:
+    - task: PowerShell@2
+      displayName: &apos;ps: Create file&apos;
+      name: create_file
+      enabled: true
+      inputs: 
+        targetType: &apos;inline&apos;
+        script: | 
+          New-Item $(System.DefaultWorkingDirectory)\test.txt
+          Set-Content $(System.DefaultWorkingDirectory)\test.txt &apos;We are going to upload this file as an artifact&apos;
+          Write-Host &quot;##vso[artifact.upload containerfolder=customupload;artifactname=samplefile]$(System.DefaultWorkingDirectory)\test.txt&quot;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</content:encoded></item><item><title><![CDATA[Generate git graph locally without GIT!!!]]></title><description><![CDATA[What and Why ?? For one of the presentation that I was preparing I planned to show the development standards followed and the GIT strategy…]]></description><link>https://koushik-aravalli.github.io/about-me/GitGraph/</link><guid isPermaLink="false">https://koushik-aravalli.github.io/about-me/GitGraph/</guid><pubDate>Mon, 10 Aug 2020 00:00:00 GMT</pubDate><content:encoded>&lt;!-- Post Content --&gt;
+&lt;h2&gt;What and Why ??&lt;/h2&gt;
+&lt;p&gt;For one of the presentation that I was preparing I planned to show the development standards followed and the GIT strategy for the team. I could have created a repo and then make branches and do all kinds of GIT actions. Later when I push the changes to GitHub or Azure DevOps there I can find the git flow of branches commits tags etc. That is one way why not, take that image and stick it in a presentation or demo !!. But during a decision-design making process adding removing cleaning actions will knock it off the table, that will not work out that &lt;em&gt;during&lt;/em&gt; a session and making new changes.&lt;/p&gt;
+&lt;h2&gt;What the tools already available&lt;/h2&gt;
+&lt;h3&gt;Mermaid diagrams&lt;/h3&gt;
+&lt;p&gt;If you have not already played around with mermaids then there it is… &lt;a href=&quot;https://mermaid-js.github.io/mermaid/#/&quot;&gt;Mermaid info&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Now I can use Azure DevOps and create mermaids in &lt;a href=&quot;https://docs.microsoft.com/en-us/azure/devops/project/wiki/wiki-markdown-guidance?view=azure-devops&quot;&gt;WIKI&lt;/a&gt; &lt;/p&gt;
+&lt;p&gt;That does not support GIT mermaid unfortunately.&lt;/p&gt;
+&lt;h3&gt;Using Script library&lt;/h3&gt;
+&lt;p&gt;Since it should be generatable as a view, I choose to investigate if there were any HTML components or Python libraries and found out GitGraph fits best for my need. &lt;/p&gt;
+&lt;p&gt;Here are the steps:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Install required platform:
+&lt;em&gt;&lt;a href=&quot;https://nodejs.org/en/download/&quot;&gt;NodeJS&lt;/a&gt;&lt;/em&gt; (Check if &lt;code class=&quot;language-text&quot;&gt;node&lt;/code&gt; and &lt;code class=&quot;language-text&quot;&gt;npm&lt;/code&gt; are accessible from terminal)&lt;/li&gt;
+&lt;li&gt;From terminal, download GitGraph into project folder - using this library we will create custom views in generating git graph
+&lt;code class=&quot;language-text&quot;&gt;npm install @gitgraph/js&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Create HTML page and import module&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;&amp;lt;!DOCTYPE html&gt;
+    &amp;lt;html&gt;
+
+    &amp;lt;head&gt;
+        &amp;lt;script src=&quot;./node_modules/@gitgraph/js/lib/gitgraph.umd.js&quot;&gt;&amp;lt;/script&gt;
+    &amp;lt;/head&gt;
+&amp;lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Add html body with content division so called &lt;code class=&quot;language-text&quot;&gt;&amp;lt;div&gt;&lt;/code&gt; tag after &lt;code class=&quot;language-text&quot;&gt;&amp;lt;head&gt;&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;  &amp;lt;body&gt;  
+    &amp;lt;div id=&quot;my-git-graph&quot;&gt;&amp;lt;/div&gt;
+  &amp;lt;/body&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Within the html &lt;code class=&quot;language-text&quot;&gt;&amp;lt;body&gt;&lt;/code&gt; tag, create script that will fill the div container &lt;code class=&quot;language-text&quot;&gt;my-git-graph&lt;/code&gt; that is created in previous step&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;&amp;lt;script&gt;
+    // Get the graph container HTML element.
+    const graphContainer = document.getElementById(&quot;my-git-graph&quot;);
+&amp;lt;/script&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Now, within the &lt;code class=&quot;language-text&quot;&gt;&amp;lt;script&gt;&lt;/code&gt; tag, start using the GitGraphJS module by first initializing with required options&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;    const gitgraphOptions = {
+        author: &quot;Koushik Aravalli &amp;lt;koushik.aravalli@gmail.com&gt;&quot;, // User your email 
+        orientation: &quot;vertical&quot;, // other options: horizontal, vertical-reverse
+        mode: &quot;compact&quot; // initail view hides commit messages (visible when hovering over)
+    }
+
+    // Instantiate the graph.
+    const gitgraph = GitgraphJS.createGitgraph(graphContainer, gitgraphOptions);&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Ready to start with GIT actions within the &lt;code class=&quot;language-text&quot;&gt;&amp;lt;script&gt;&lt;/code&gt; tag&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Create branch &lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;const a_new_branch = gitgraph.branch(&quot;a-new-branch&quot;);&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Commit branch with message&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;a_new_branch.commit(&quot;Initial commit&quot;);&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Also, add a tag a commit&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;a_new_branch.commit(&quot;Initial commit&quot;).tag(&quot;v0.1-alpha&quot;);&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Here is the first branch&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/87786c7991dabcd60268536808386ce8/2020-08-07-GitGraph-new-branch-commit.gif&quot;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Now, we have a first branch, branch out from there with&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;a_new_branch.branch(&quot;another-branch-from-a_new_branch&quot;).commit(&quot;another branch first commit&quot;);&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 456px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/static/52eed232c45ec9a400a4e838ad818c23/a7312/2020-08-07-GitGraph-another-new-branch.jpg&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 31.08108108108108%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/jpeg;base64,/9j/2wBDABALDA4MChAODQ4SERATGCgaGBYWGDEjJR0oOjM9PDkzODdASFxOQERXRTc4UG1RV19iZ2hnPk1xeXBkeFxlZ2P/2wBDARESEhgVGC8aGi9jQjhCY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2P/wgARCAAGABQDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAIF/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAH/2gAMAwEAAhADEAAAAduhKC//xAAUEAEAAAAAAAAAAAAAAAAAAAAQ/9oACAEBAAEFAn//xAAUEQEAAAAAAAAAAAAAAAAAAAAQ/9oACAEDAQE/AT//xAAUEQEAAAAAAAAAAAAAAAAAAAAQ/9oACAECAQE/AT//xAAVEAEBAAAAAAAAAAAAAAAAAAAQEf/aAAgBAQAGPwKv/8QAGRAAAwADAAAAAAAAAAAAAAAAAAERIUFR/9oACAEBAAE/IVmtsSvSH//aAAwDAQACAAMAAAAQ9A//xAAVEQEBAAAAAAAAAAAAAAAAAAABEP/aAAgBAwEBPxAJ/8QAFBEBAAAAAAAAAAAAAAAAAAAAEP/aAAgBAgEBPxA//8QAGRABAAMBAQAAAAAAAAAAAAAAAQARIYGR/9oACAEBAAE/EMlOqAcAWELv1ABW9Z//2Q==&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;2020 08 07 GitGraph another new branch&quot;
+        title=&quot;2020 08 07 GitGraph another new branch&quot;
+        src=&quot;/static/52eed232c45ec9a400a4e838ad818c23/a7312/2020-08-07-GitGraph-another-new-branch.jpg&quot;
+        srcset=&quot;/static/52eed232c45ec9a400a4e838ad818c23/a80bd/2020-08-07-GitGraph-another-new-branch.jpg 148w,
+/static/52eed232c45ec9a400a4e838ad818c23/1c91a/2020-08-07-GitGraph-another-new-branch.jpg 295w,
+/static/52eed232c45ec9a400a4e838ad818c23/a7312/2020-08-07-GitGraph-another-new-branch.jpg 456w&quot;
+        sizes=&quot;(max-width: 456px) 100vw, 456px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+      /&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Finally, merge the &lt;code class=&quot;language-text&quot;&gt;another-branch-from-a_new_branch&lt;/code&gt; into &lt;code class=&quot;language-text&quot;&gt;a_new_branch&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;// One-line
+a_new_branch.merge(a_new_branch.branch(&quot;another-branch-from-a_new_branch&quot;).commit(&quot;another branch first commit&quot;));
+
+// Split it
+const another_new_branch = a_new_branch.branch(&quot;another-branch-from-a_new_branch&quot;).commit(&quot;another branch first commit&quot;);
+a_new_branch.merge(another_new_branch);&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 446px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/static/e449d646d1ee0dd230b9599a01930d1f/3a193/2020-08-07-GitGraph-merge-branch.jpg&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 48.64864864864865%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/jpeg;base64,/9j/2wBDABALDA4MChAODQ4SERATGCgaGBYWGDEjJR0oOjM9PDkzODdASFxOQERXRTc4UG1RV19iZ2hnPk1xeXBkeFxlZ2P/2wBDARESEhgVGC8aGi9jQjhCY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2P/wgARCAAKABQDASIAAhEBAxEB/8QAFwAAAwEAAAAAAAAAAAAAAAAAAAECBf/EABUBAQEAAAAAAAAAAAAAAAAAAAAB/9oADAMBAAIQAxAAAAHbspEMX//EABgQAAIDAAAAAAAAAAAAAAAAAAEQAiEx/9oACAEBAAEFAomkMX//xAAUEQEAAAAAAAAAAAAAAAAAAAAQ/9oACAEDAQE/AT//xAAUEQEAAAAAAAAAAAAAAAAAAAAQ/9oACAECAQE/AT//xAAVEAEBAAAAAAAAAAAAAAAAAAAQAf/aAAgBAQAGPwJj/8QAHBAAAgEFAQAAAAAAAAAAAAAAAREAECFBUWGh/9oACAEBAAE/ISG9lZ3Hwx8nmr//2gAMAwEAAgADAAAAEAwP/8QAFREBAQAAAAAAAAAAAAAAAAAAARD/2gAIAQMBAT8QCf/EABQRAQAAAAAAAAAAAAAAAAAAABD/2gAIAQIBAT8QP//EAB0QAQABAwUAAAAAAAAAAAAAAAERADGxECFBgcH/2gAIAQEAAT8QLQkQFtg386oQZqE8ijBFoY1//9k=&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;2020 08 07 GitGraph merge branch&quot;
+        title=&quot;2020 08 07 GitGraph merge branch&quot;
+        src=&quot;/static/e449d646d1ee0dd230b9599a01930d1f/3a193/2020-08-07-GitGraph-merge-branch.jpg&quot;
+        srcset=&quot;/static/e449d646d1ee0dd230b9599a01930d1f/a80bd/2020-08-07-GitGraph-merge-branch.jpg 148w,
+/static/e449d646d1ee0dd230b9599a01930d1f/1c91a/2020-08-07-GitGraph-merge-branch.jpg 295w,
+/static/e449d646d1ee0dd230b9599a01930d1f/3a193/2020-08-07-GitGraph-merge-branch.jpg 446w&quot;
+        sizes=&quot;(max-width: 446px) 100vw, 446px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+      /&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;With more customizations it can be more illustrated &lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 590px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/static/8b17b63adf43f66d1c699454748f081b/2116d/2020-08-07-GitGraph-all-in.gif.jpg&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 38.513513513513516%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/jpeg;base64,/9j/2wBDABALDA4MChAODQ4SERATGCgaGBYWGDEjJR0oOjM9PDkzODdASFxOQERXRTc4UG1RV19iZ2hnPk1xeXBkeFxlZ2P/2wBDARESEhgVGC8aGi9jQjhCY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2P/wgARCAAIABQDASIAAhEBAxEB/8QAFwABAAMAAAAAAAAAAAAAAAAAAAEDBf/EABUBAQEAAAAAAAAAAAAAAAAAAAAB/9oADAMBAAIQAxAAAAHagS0H/8QAGRAAAQUAAAAAAAAAAAAAAAAAAQACEBES/9oACAEBAAEFAi21kCP/xAAUEQEAAAAAAAAAAAAAAAAAAAAQ/9oACAEDAQE/AT//xAAUEQEAAAAAAAAAAAAAAAAAAAAQ/9oACAECAQE/AT//xAAbEAABBAMAAAAAAAAAAAAAAAABABARITGBkf/aAAgBAQAGPwK4Olgcb//EABgQAQADAQAAAAAAAAAAAAAAAAEAEVFB/9oACAEBAAE/IeBRsFRAYL0Z/9oADAMBAAIAAwAAABD8H//EABURAQEAAAAAAAAAAAAAAAAAAAEQ/9oACAEDAQE/EGf/xAAVEQEBAAAAAAAAAAAAAAAAAAABEP/aAAgBAgEBPxAn/8QAGhABAAMAAwAAAAAAAAAAAAAAAQARIVFhgf/aAAgBAQABPxCmLgxBjPJcJXsNN7FT/9k=&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;2020 08 07 GitGraph all in gif&quot;
+        title=&quot;2020 08 07 GitGraph all in gif&quot;
+        src=&quot;/static/8b17b63adf43f66d1c699454748f081b/1c72d/2020-08-07-GitGraph-all-in.gif.jpg&quot;
+        srcset=&quot;/static/8b17b63adf43f66d1c699454748f081b/a80bd/2020-08-07-GitGraph-all-in.gif.jpg 148w,
+/static/8b17b63adf43f66d1c699454748f081b/1c91a/2020-08-07-GitGraph-all-in.gif.jpg 295w,
+/static/8b17b63adf43f66d1c699454748f081b/1c72d/2020-08-07-GitGraph-all-in.gif.jpg 590w,
+/static/8b17b63adf43f66d1c699454748f081b/2116d/2020-08-07-GitGraph-all-in.gif.jpg 877w&quot;
+        sizes=&quot;(max-width: 590px) 100vw, 590px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+      /&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;That is it.. I dint expect it would be this simple.. and here is the &lt;strong&gt;&lt;em&gt;&lt;a href=&quot;https://github.com/koushik-aravalli/development/tree/master/LetsCreateGitgraph&quot;&gt;sample-gitgraph-code&lt;/a&gt;&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Syntax Highlighting Post]]></title><description><![CDATA[Syntax highlighting is a feature that displays source code, in different colors and fonts according to the category of terms. This feature…]]></description><link>https://koushik-aravalli.github.io/about-me/code-highlighting-post/</link><guid isPermaLink="false">https://koushik-aravalli.github.io/about-me/code-highlighting-post/</guid><pubDate>Mon, 27 Jul 2020 07:26:03 GMT</pubDate><content:encoded>&lt;p&gt;Syntax highlighting is a feature that displays source code, in different colors and fonts according to the category of terms. This feature facilitates writing in a structured language such as a programming language or a markup language as both structures and syntax errors are visually distinct. Highlighting does not affect the meaning of the text itself; it is intended only for human readers.&lt;sup id=&quot;fnref-1&quot;&gt;&lt;a href=&quot;#fn-1&quot; class=&quot;footnote-ref&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+&lt;h3&gt;Fenced Code Blocks&lt;/h3&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;css&quot;&gt;&lt;pre class=&quot;language-css&quot;&gt;&lt;code class=&quot;language-css&quot;&gt;&lt;span class=&quot;token selector&quot;&gt;#container&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;token property&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; left&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;token property&quot;&gt;margin&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; 0 -240px 0 0&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;token property&quot;&gt;width&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; 100%&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;div class=&quot;footnotes&quot;&gt;
+&lt;hr&gt;
+&lt;ol&gt;
+&lt;li id=&quot;fn-1&quot;&gt;
+&lt;p&gt;&lt;a href=&quot;http://en.wikipedia.org/wiki/Syntax_highlighting&quot;&gt;http://en.wikipedia.org/wiki/Syntax_highlighting&lt;/a&gt;&lt;/p&gt;
+&lt;a href=&quot;#fnref-1&quot; class=&quot;footnote-backref&quot;&gt;↩&lt;/a&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;</content:encoded></item><item><title><![CDATA[Azure DevOps YAML Working models and challenges]]></title><description><![CDATA[Background As we, within a team, start working together and digest that the operations are part of our daily activities, the subconscious…]]></description><link>https://koushik-aravalli.github.io/about-me/AzureDevopsYaml/</link><guid isPermaLink="false">https://koushik-aravalli.github.io/about-me/AzureDevopsYaml/</guid><pubDate>Wed, 01 Jul 2020 00:00:00 GMT</pubDate><content:encoded>&lt;!-- Post Content --&gt;
+&lt;br/&gt;
+&lt;h2&gt;Background&lt;/h2&gt;
+&lt;p&gt;As we, within a team, start working together and digest that the operations are part of our daily activities, the subconscious part of our mind treat these as development actions. This gradually mutates into code (in any language) and automation, assuming that it will simplify our lives! &lt;/p&gt;
+&lt;p&gt;When a ProductOwner starts his question with “Is it possible to …”, thinking with my developers hat, without any hesitation the reply would be “Every thing is possible with code”. &lt;em&gt;(But wait how many lines of code are we writing everyday. Again I started writing code to count the number of lines of code, number of git diffs and make a statics out of it. That is another post later.)&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;&lt;a href=&quot;https://dev.azure.com&quot;&gt;Azure DevOps&lt;/a&gt;&lt;/em&gt; is almost a default across many organizations. Continuous improvements on the features by the product team and their transparency on their &lt;em&gt;[road map](&lt;a href=&quot;https://dev.azure.com/mseng/AzureDevOpsRoadmap/&quot;&gt;https://dev.azure.com/mseng/AzureDevOpsRoadmap/&lt;/a&gt;&lt;/em&gt;workitems/recentlyupdated)_ helps in making a rational decision on the implementations. Most of the leading Application release automation products, pipeline as code is a norm. As I already said, our inclination towards writing code is now much more biased, isn’t it? &lt;/p&gt;
+&lt;br/&gt;
+&lt;h3&gt;&lt;em&gt;Concern&lt;/em&gt;: &lt;strong&gt;Pipeline as Code != Pipeline as Scripture&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;Azure DevOps supports developers in organizing pipelines as either YAML or friendly drag-drop view. Teams prefer former approach which has advantages over the later one mostly because of the embedded DevOps culture.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;YAML&lt;/th&gt;
+&lt;th&gt;Classic&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;img src=&quot;../../assets2020-07-02-AzDevops-Yaml-Build.jpg&quot;&gt;&lt;/td&gt;
+&lt;td&gt;&lt;img src=&quot;../../assets2020-07-02-AzDevops-Classic-Build.jpg&quot;&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3&gt;&lt;em&gt;How to Address&lt;/em&gt;: &lt;strong&gt;Standards when writing pipeline&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;Inline with general coding standards, team should also enforce all possible actions when writing a pipelines. Some basic rules that can be enforced are &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Comments at the top of the pipeline describing briefly about activities performed within each Jobs. Avoid granular details at task level, unless required
+&lt;img src=&quot;../../assets2020-07-02-AzDevops-Yaml-Comments.jpg&quot;&gt;&lt;/li&gt;
+&lt;li&gt;List all the &lt;a href=&quot;https://docs.microsoft.com/en-us/azure/devops/pipelines/process/variables?view=azure-devops&amp;#x26;tabs=yaml%2Cbatch#allow-at-queue-time&quot;&gt;Queue time variables&lt;/a&gt; because they are not evident in the YAML but added within the Azure DevOps pipeline
+&lt;img src=&quot;../../assets2020-07-02-AzDevops-Yaml-Queuetime-Var.jpg&quot;&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Maintain and identify the differences&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;PascalCase&lt;/strong&gt; for Parameters&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;camelCase&lt;/strong&gt; for variables&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;UPPERCASE&lt;em&gt;UNDERSCORE&lt;/em&gt;SEPARATED_NAME&lt;/strong&gt; for Stage Names&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;lowercase&lt;em&gt;underscore&lt;/em&gt;separated_name&lt;/strong&gt; for Job Names&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;lowercase&lt;em&gt;underscore&lt;/em&gt;separated_name&lt;/strong&gt; for task Names&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Azure DevOps accepts runtime variables in either &lt;code class=&quot;language-text&quot;&gt;$(var)&lt;/code&gt; or &lt;code class=&quot;language-text&quot;&gt;$[variables.var]&lt;/code&gt; format. Stay consistent in runtime variable declaration to avoid confusion. &lt;/li&gt;
+&lt;li&gt;Target towards light weight Jobs. Single Stage with multiple Jobs is acceptable as well.&lt;/li&gt;
+&lt;li&gt;Finally, work towards not embedding process complexity into pipeline YAML.&lt;/li&gt;
+&lt;/ul&gt;
+ &lt;br/&gt;
+&lt;h3&gt;&lt;em&gt;Concern&lt;/em&gt;: &lt;strong&gt;Pipeline name&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;By default new pipeline created in Azure DevOps is named &lt;code class=&quot;language-text&quot;&gt;YourRepo - CI&lt;/code&gt; or &lt;code class=&quot;language-text&quot;&gt;YourRepo - CI(#)&lt;/code&gt;. This is not always the case if there are bunch of solutions hosted within the same repo. &lt;/p&gt;
+&lt;h3&gt;&lt;em&gt;How to Address&lt;/em&gt;: &lt;strong&gt;Naming convention&lt;/strong&gt;&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;When a repo has &lt;strong&gt;&lt;em&gt;one solution&lt;/em&gt;&lt;/strong&gt; with one pipeline which does the full deployment, just name the file as &lt;code class=&quot;language-text&quot;&gt;azure-pipeline.yaml&lt;/code&gt; which will be automatically picked up by Azure DevOps for continuous integration.&lt;/li&gt;
+&lt;li&gt;While working with multiple YAML files, file names should represent target build/deployment process&lt;/li&gt;
+&lt;li&gt;Having Azure DevOps Pipeline name as the YAML file name is always easy to map the reference.&lt;/li&gt;
+&lt;li&gt;Templates are reusable entities, naming stage template and job template as &lt;code class=&quot;language-text&quot;&gt;{common-process}.stage-template.yaml&lt;/code&gt; or &lt;code class=&quot;language-text&quot;&gt;{common-process}.job-template.yaml&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Rename pipeline as soon as they are added manually.
+&lt;img src=&quot;2020-07-02-AzDevops-Yaml-PipelineName&quot;&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;br/&gt;
+&lt;h3&gt;&lt;em&gt;Concern&lt;/em&gt; : &lt;strong&gt;Random execution name&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;Every execution of the pipeline should tell a story of what could have been done. Execution Name make a story along with comment messages. &lt;/p&gt;
+&lt;h3&gt;&lt;em&gt;How to Address&lt;/em&gt;: &lt;strong&gt;Naming convention&lt;/strong&gt;&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Select a standard name similar to below, with multiple Repos in same Project also have a repo name
+&lt;code class=&quot;language-text&quot;&gt;name: $(TeamProject)_$(BuildDefinitionName)_$(SourceBranch)_$(Date:yyyyMMdd)$(Rev:.r)&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Build names can be changed during the execution of the pipeline using &lt;code class=&quot;language-text&quot;&gt;$(build.updatebuildnumber)&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;So, these are some of my learning when working with Azure DevOps YAML. These could be simple common sense points but they help in betterment of work.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[About me]]></title><description><![CDATA[Hi and welcome to my blog. I am Koushik, working as a Software engineer for over 15 years. You can get in touch with me from my LinkedIn…]]></description><link>https://koushik-aravalli.github.io/about-me/about-me/</link><guid isPermaLink="false">https://koushik-aravalli.github.io/about-me/about-me/</guid><pubDate>Tue, 23 Jun 2020 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;Hi and welcome to my blog. I am Koushik, working as a Software engineer for over 15 years. You can get in touch with me from my &lt;a href=&quot;https://www.linkedin.com/in/koushik-aravalli/&quot;&gt;LinkedIn Page&lt;/a&gt;. &lt;/p&gt;
+&lt;p&gt;If you are still reading .. then this is my frame of thought&lt;/p&gt;
+&lt;p&gt;Imagine there is no google or any other search engines, would we have cornered that investigation which we picked? Would we have crossed so many of our challenges?
+It is the community who helps and those brilliant ideas (always relative!!) that break through to solve our equations.
+I believe through continuous learning and experience, that femto amps of spark lit to our brilliant ideas. so learn-implement-act-repeat that is what I do. &lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;By the way, all ideas, thoughts, scribbles, scratches, code snippets, pushes mentioned here are my own not influenced by anyone nor reflections of my employer.&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;It is within the moments of a decision making that carves persons destiny.&lt;/em&gt;&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Azure Function with Turnkey Authorization]]></title><description><![CDATA[Working with Azure Functions as typical API When Azure functions were launched in January 2017, it was fascinating to see how easy it is to…]]></description><link>https://koushik-aravalli.github.io/about-me/AzureFunction-Turnkey-Authorization/</link><guid isPermaLink="false">https://koushik-aravalli.github.io/about-me/AzureFunction-Turnkey-Authorization/</guid><pubDate>Mon, 22 Jun 2020 00:00:00 GMT</pubDate><content:encoded>&lt;!-- Post Content --&gt;
+&lt;br/&gt;
+&lt;h2&gt;Working with Azure Functions as typical API&lt;/h2&gt;
+&lt;p&gt;When Azure functions were launched in January 2017, it was fascinating to see how easy it is to copy bits of of code. Honestly, I used it for testing code behavior rather than utilizing it to the most. And during the same year in June, talking to the Product team at Integrate 2017, some fantastic use cases were unveiled lighting up few bulbs in my head.&lt;/p&gt;
+&lt;p&gt;While enterprises chase the dream to APIfy all their products, cloud service providers speedup the innovations.&lt;/p&gt;
+&lt;h2&gt;Problem Statement&lt;/h2&gt;
+&lt;p&gt;The APIs are defined and published across organization to be consumed by Authorized groups. Although App Service Authentication can be managed within Azure (Portal/PS/CLI), the challenge is to have authorization set. How are these tackled to minimize the risk of cross teams breaching into private data sets.&lt;/p&gt;
+&lt;p&gt;Here is the illustration of what we are trying to solve
+&lt;img src=&quot;../../assetsAuthroized-AzFunction.jpg&quot;&gt;&lt;/p&gt;
+&lt;h2&gt;Turn Key solution&lt;/h2&gt;
+&lt;p&gt;Within &lt;strong&gt;&lt;a href=&quot;https://docs.microsoft.com/en-us/azure/app-service/app-service-authentication-how-to&quot;&gt;Azure docs&lt;/a&gt;&lt;/strong&gt;, highlights the usage of Turn-Key approach to address the Authorization issue. &lt;/p&gt;
+&lt;p&gt;Here is the prerequisite:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Create an Azure FunctionApp and Add Authentication by registering it in the AzureAD&lt;/li&gt;
+&lt;li&gt;Assume there are two Azure AD groups, if not create, and multiple users or ServicePrincipal in each group&lt;/li&gt;
+&lt;li&gt;Select one of the two ADGroup members are only allowed to consume the FunctionApp API&lt;/li&gt;
+&lt;li&gt;As FunctionApp is invoked, request header ‘Authorization’ should be added with Bearer token&lt;/li&gt;
+&lt;li&gt;Before calling the Function within the FunctionApp, invoke a service within the pipeline to perform authorization&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3&gt;Within Authorization Service - high level overview of the process&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;Read and capture the incoming request header token&lt;/li&gt;
+&lt;li&gt;Read and capture, user context&lt;/li&gt;
+&lt;li&gt;Get claims for the incoming user context, e.g. ObjectId, TenantId, Name&lt;/li&gt;
+&lt;li&gt;Using GraphAPI, GET AD Group memberships linked to the ObjectId&lt;/li&gt;
+&lt;li&gt;Check if the selected ADGroup which is allowed to consume the Function is part of the ObjectId membership list.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2&gt;V3 of Azure Function: What does it mean?&lt;/h2&gt;
+&lt;p&gt;It is almost a day in day out work to write, publish and deploy APIs as developers and architects (yes they do write code). .NET Core is a norm, if you do not believe it look in the &lt;strong&gt;&lt;a href=&quot;https://insights.stackoverflow.com/survey/2019#technology-_-other-frameworks-libraries-and-tools&quot;&gt;stackoverflow’s statistics&lt;/a&gt;&lt;/strong&gt;. &lt;/p&gt;
+&lt;p&gt;Azure Function with the .NET core starting from V2 version supports Dependency Injection. And V3, launched in September 2019, is implemented with .NET 3.1 &lt;/p&gt;
+&lt;h2&gt;Enough scribbling… code please&lt;/h2&gt;
+&lt;p&gt;If you jumped here, you have not missed anything about awesomeness of .NET core and Azure Function.&lt;/p&gt;
+&lt;p&gt;So where do we start…&lt;/p&gt;
+&lt;h3&gt;For the prerequisites&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;&lt;a href=&quot;https://docs.microsoft.com/en-us/azure/app-service/configure-authentication-provider-aad&quot;&gt;Azure Docs&lt;/a&gt;&lt;/strong&gt; provides details on how to create Authentication on an App Service. &lt;/p&gt;
+&lt;h4&gt;We want code… no portal&lt;/h4&gt;
+&lt;p&gt;When using ARM template it can also be done with the following resource added to the FunctionApp deployment:&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;{
+  &quot;parameters&quot;:{
+    &quot;authenticationClientSecret&quot;: {
+        &quot;reference&quot;: {
+          &quot;keyVault&quot;: {
+          &quot;id&quot;: &quot;/subscriptions/&amp;lt;subscription-id&gt;/resourceGroups/&amp;lt;rg-name&gt;/providers/Microsoft.KeyVault/vaults/&amp;lt;vault-name&gt;&quot;
+          },
+          &quot;secretName&quot;: &quot;authenticationClientSecret&quot;
+        }
+      },
+    &quot;authenticationClientId&quot;: {
+        &quot;reference&quot;: {
+          &quot;keyVault&quot;: {
+          &quot;id&quot;: &quot;/subscriptions/&amp;lt;subscription-id&gt;/resourceGroups/&amp;lt;rg-name&gt;/providers/Microsoft.KeyVault/vaults/&amp;lt;vault-name&gt;&quot;
+          },
+          &quot;secretName&quot;: &quot;authenticationClientId&quot;
+        }
+      }
+  },
+  &quot;variables&quot; : {
+    &quot;authenticationTokenIssuer&quot;: &quot;https://sts.windows.net/&amp;lt;tenant-id&gt;&quot;
+  }
+}&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;  {
+      &quot;type&quot;: &quot;config&quot;,
+      &quot;name&quot;: &quot;authsettings&quot;,
+      &quot;apiVersion&quot;: &quot;2019-08-01&quot;,
+      &quot;dependsOn&quot;: [
+          &quot;[variables(&apos;appServiceResourceId&apos;)]&quot;
+      ],
+      &quot;properties&quot;: {
+          &quot;enabled&quot;: true,
+          &quot;unauthenticatedClientAction&quot;: &quot;RedirectToLoginPage&quot;,
+          &quot;tokenStoreEnabled&quot;: true,
+          &quot;defaultProvider&quot;: &quot;AzureActiveDirectory&quot;,
+          &quot;clientId&quot;: &quot;[parameters(&apos;authenticationClientId&apos;)]&quot;,
+          &quot;clientSecret&quot;: &quot;[parameters(&apos;authenticationClientSecret&apos;)]&quot;,
+          &quot;issuer&quot;: &quot;[variables(&apos;authenticationTokenIssuer&apos;)]&quot;,
+          &quot;additionalLoginParams&quot;: [
+              &quot;response_type=code id_token&quot;,
+              &quot;resource=https://graph.windows.net&quot;
+          ],
+          &quot;allowedAudiences&quot;: [
+              &quot;https://graph.windows.net&quot;
+          ]
+      }
+  }&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Validate SPN’s API permission after the FunctionApp deployment
+&lt;img src=&quot;../../assetsfunctionapp-spn-app-permissions.jpg&quot;&gt;&lt;/p&gt;
+&lt;p&gt;In this example Azure Function ‘its-authenticated’ is deployed in ‘pass-workload’ resource group.&lt;/p&gt;
+&lt;h4&gt;Check delegated SPN&lt;/h4&gt;
+&lt;p&gt;After this step, from azure cloud shell get the dedicated service principal of the FunctionApp&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;  az webapp auth show --name &apos;its-authenticated&apos; --resource-group &apos;paas-workload&apos;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;From the response, get clientId.&lt;/p&gt;
+&lt;h4&gt;Create AAD Group&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;AAD group who are allowed to consume Functions within Azure FunctionApp&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;az ad group create --display-name DevOpsTeamOne --mail-nickname devopsteam-one&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;AAD group who are not allowed to consume Functions within Azure FunctionApp&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;az ad group create --display-name DevOpsTeamTwo --mail-nickname devopsteam-two&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;Add member to AAD Group&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Add clientId (SPN) of the FunctionApp to the authorized AAD group&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;az ad group member add --group DevOpsTeamOne --member-id $client_id&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Add &lt;em&gt;sampleuser&lt;/em&gt; to the unauthorized AAD group&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;az ad group member add --group DevOpsTeamTwo --member-id ${objectid_of_user}&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;Get access-token for a user&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;Login as the ServicePrincipal &lt;strong&gt;&lt;a href=&quot;#check-delegated-spn&quot;&gt;client_secret value is part of the command&lt;/a&gt;&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Run Azure cli command to get the token&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;az account get-access-token&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;Decode token&lt;/h4&gt;
+&lt;p&gt;To check if the token belongs to the expected Tenant and is a valid user. You can also decode the token using &lt;strong&gt;&lt;a href=&quot;https://jwt.io/#encoded-jwt&quot;&gt;jwt.io&lt;/a&gt;&lt;/strong&gt; and check manually&lt;/p&gt;
+&lt;p&gt;Here is the sample code to get details using Azure AD GraphApi:&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;  string aadObjectUrl = $&quot;https://graph.windows.net/{TenantId}/directoryObjects/{incommingClientObjectId}?api-version=1.6&quot;;
+  using (var aadObjectResponse = await _client.GetAsync(aadObjectUrl))
+  {
+      string objectContent = await aadObjectResponse.Content.ReadAsStringAsync();
+      aadObjectResponse.EnsureSuccessStatusCode();
+
+      dynamic aadObject = JsonConvert.DeserializeObject(objectContent);
+      if (aadObject.ObjectType == &quot;ServicePrincipal&quot;)
+      {
+          principalDataRsp.DisplayName = $&quot;{aadObject.DisplayName} ({aadObject.AppId})&quot;;
+      }
+
+      _log.LogInformation($&quot;Called by &apos;{principalDataRsp.DisplayName}&apos; with object id &apos;{principalDataRsp.ObjectId}&apos; and tenant id &apos;{principalDataRsp.TenantId}&apos;.&quot;);
+
+  }&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;  &lt;em&gt;Note: HttpClient is initialized with default authorization headers as the incoming accesstoken.&lt;/em&gt;&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;  _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(&quot;Bearer&quot;, accessToken);&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h4&gt;Get Group Memberships of the current user context&lt;/h4&gt;
+&lt;p&gt;Again using AzureAD graph API get all group membership that the user context has. &lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;  string memberGroupsUrl = $&quot;https://graph.windows.net/{TenantId}/directoryObjects/{incommingClientObjectId}/getMemberGroups?api-version=1.6&quot;;
+  HttpContent postContent = new StringContent(&quot;{ \&quot;securityEnabledOnly\&quot;: true }&quot;, Encoding.UTF8, &quot;application/json&quot;);
+  using (var membersGroupResponse = await _client.PostAsync(memberGroupsUrl, postContent))
+  {
+      membersGroupResponse.EnsureSuccessStatusCode();
+
+      string membersGroupContent = await membersGroupResponse.Content.ReadAsStringAsync();
+
+      JsonDocument json = JsonDocument.Parse(membersGroupContent);
+      JsonElement valueElement = json.RootElement.GetProperty(&quot;value&quot;);
+      bool authorizedGroupFound = false;
+      int numberOfGroups = valueElement.GetArrayLength();
+      _log.LogInformation($&quot;Found {numberOfGroups} groups of which the service principal &apos;{principalDataRsp.DisplayName}&apos; is a member.&quot;);
+
+  }&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h4&gt;Finally check if the list has valid Authorized group&lt;/h4&gt;
+&lt;p&gt;Use LINQ or normal conditional loop&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;  foreach (JsonElement arrayElement in valueElement.EnumerateArray())
+  {
+      if (arrayElement.GetString() == AuthorizedGroupObjectId)
+      {
+          authorizedGroupFound = true;
+          break;
+      }
+  }&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;That’s it.. ;) … Hope that gives a starting point to secure Azure FunctionApp.. Here is the &lt;strong&gt;&lt;a href=&quot;https://github.com/koushik-aravalli/functionapp-dotnetcore&quot;&gt;repo&lt;/a&gt;&lt;/strong&gt; for reference&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Clone GitHub Repo from VSCode]]></title><description><![CDATA[Yes ok, we all know how to clone with git command One fine day you have your a new most powerful (developers dream) laptop, everything tool…]]></description><link>https://koushik-aravalli.github.io/about-me/github-vscode-error/</link><guid isPermaLink="false">https://koushik-aravalli.github.io/about-me/github-vscode-error/</guid><pubDate>Sun, 14 Jun 2020 00:00:00 GMT</pubDate><content:encoded>&lt;!-- Post Content --&gt;
+&lt;p&gt;Yes ok, we all know how to clone with git command&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;git clone https://github.com/{your-account-name}/{your-repo-name}.git&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;One fine day you have your a new most powerful (developers dream) laptop, everything tool/package installed and all set for rework on your code. Rerun git clone on your own repo, BAAAAMMM.. git error &lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;fatal: repository https://github.com/{your-account-name}/{your-repo-name}.git not found&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;So you login with your favorite browser and check, and your repo is right there untouched!! &lt;/p&gt;
+&lt;p&gt;Scratch your head and rethink, is it network error. Now open your awesome ide ‘VSCode’, click on the shining button ‘Clone Repository’ —&gt; Clone from GitHub. &lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;../../assetsvscode-github-connection.jpg&quot;&gt;&lt;/p&gt;
+&lt;p&gt;Browser opens up and asks to authorize VSCode. Now with a smiling face, we authorize. BAAAAMMMM… Error &lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;../../assetsvscode-github-connection-browser-error.jpg&quot;&gt;&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;  Oh no! An error occurred!
+  Please restart the sign in process from the editor.
+  Error code 801&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h3&gt;Issue&lt;/h3&gt;
+&lt;p&gt;GitHub internally maintains the list of all devices which were used for authentication and it doesn’t have your latest device&lt;/p&gt;
+&lt;h3&gt;Solution&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Login into GitHub from the browser&lt;/li&gt;
+&lt;li&gt;Select your profile and settings
+&lt;img src=&quot;../../assetsgithub-settings.jpg&quot;&gt;&lt;/li&gt;
+&lt;li&gt;On the right bottom look for Developer Settings
+&lt;img src=&quot;../../assetsgithub-developer-settings.jpg&quot;&gt;&lt;/li&gt;
+&lt;li&gt;Select and Open Personal Access tokens&lt;/li&gt;
+&lt;li&gt;Notice that it lists all the workstations (devices) that you have used to work or cloned your personal GitHub projects
+&lt;img src=&quot;../../assetsgithub-pat.jpg&quot;&gt;&lt;/li&gt;
+&lt;li&gt;Now, on the top ‘Generate new token’, give it a name and &lt;strong&gt;&lt;em&gt;make sure you copy the token hash key&lt;/em&gt;&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Jump back to your VSCode, retry your git clone command or at the right bottom look for ‘Signing into GitHub’, click it and you will be asked to enter token. Paste it and done. &lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Simple isn’t it. … Happy coding..&lt;/p&gt;</content:encoded></item></channel></rss>
